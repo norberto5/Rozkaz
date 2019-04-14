@@ -10,6 +10,8 @@ namespace Rozkaz.Models
         public string OccassionalIntro { get; set; }
 
         public string ExceptionsFromAnotherOrder { get; set; }
+
+        public List<OrderCategory> Categories { get; set; }
     }
 
     public class OrderInfoModel

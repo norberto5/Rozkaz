@@ -89,6 +89,29 @@ namespace Rozkaz.Services
                 },
                 OccassionalIntro = "Wstęp okolicznościowy (święta państwowe, rocznice, szczególne wydarzenia w Związku)",
                 ExceptionsFromAnotherOrder = "Wyjątki z rozkazu komendanta Hufca Szczecin ZHP L. 22 / 2019 z dnia..... 2019 r.",
+                Categories = new List<OrderCategory>()
+                {
+                    new OrderCategory("Zarządzenia i informacje", new List<OrderSubcategory>()
+                    {
+                        new OrderSubcategory("Zarządzenia", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Zwołuję Zlot Drużyny .......")
+                        }),
+                        new OrderSubcategory("Informacje", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Podaję do wiadomości, ze przy drużynie zawiązało się Koło Przyjaciół Harcerstwa. Na przewodniczącego Koła został wybrany pan .........."),
+                            new SubcategoryElement("Informuję o decyzji Rady Drużyny z dnia …. w sprawie ….. Treść decyzji stanowi załącznik nr 1 do niniejszego rozkazu.")
+                        })
+                    }),
+                    new OrderCategory("Drużyna", new List<OrderSubcategory>()
+                    {
+                        new OrderSubcategory("Mianowania funkcyjnych", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Na wniosek Rady Drużyny mianuję sam. Janinę Barys przyboczną z dniem ......."),
+                            new SubcategoryElement("Na wniosek Rady Drużyny mianuję wyw. Tomasza Łęckiego kronikarzem drużyny z dniem .......")
+                        })
+                    })
+                }
             };
 
             PdfDocument document = Init(model);
@@ -111,21 +134,28 @@ namespace Rozkaz.Services
                 DrawSpace(2);
             }
 
-            DrawBiggerBold("1. Zarządzenia i informacje");
-            DrawBold("1.1. Zarządzenia");
-            DrawText("Przykład:");
-            DrawText("1.1.1. Zwołuję Zlot Drużyny ..........");
-            DrawBold("1.2. Informacje");
-            DrawText("Przykład:");
-            DrawText("1.2.1. Podaję do wiadomości, ze przy drużynie zawiązało się Koło Przyjaciół Harcerstwa. Na przewodniczącego Koła został wybrany pan ..........");
-            DrawText("1.2.2. Informuję o decyzji Rady Drużyny z dnia …. w sprawie ….. Treść decyzji stanowi załącznik nr 1 do niniejszego rozkazu. ");
+            uint categoryNumber = 0;
 
-            DrawSpace(1);
-            DrawBiggerBold("2. Drużyna");
-            DrawBold("2.1. Mianowania funkcyjnych");
-            DrawText("Przykład:");
-            DrawText("2.1.1. Na wniosek Rady Drużyny mianuję sam. Janinę Barys przyboczną z dniem ………");
-            DrawText("2.1.2. Na wniosek Rady Drużyny mianuję wyw. Tomasza Łęckiego kronikarzem drużyny z dniem ………");
+            foreach(OrderCategory category in model.Categories)
+            {
+                categoryNumber++;
+                DrawBiggerBold($"{categoryNumber}. {category.Name}");
+
+                uint subcategoryNumber = 0;
+                foreach(OrderSubcategory subcategory in category.Subcategories)
+                {
+                    subcategoryNumber++;
+                    DrawBold($"{categoryNumber}.{subcategoryNumber}. {subcategory.Name}");
+
+                    uint elementNumber = 0;
+                    foreach(SubcategoryElement element in subcategory.Elements)
+                    {
+                        elementNumber++;
+                        DrawText($"{categoryNumber}.{subcategoryNumber}.{elementNumber}. {element.Description}");
+                    }
+                }
+                DrawSpace(1);
+            }
 
             Sign();
             Footer();
