@@ -1,6 +1,4 @@
-using System;
-
-namespace norberto5.Models
+namespace Rozkaz.Models
 {
 	public class ErrorViewModel
 	{

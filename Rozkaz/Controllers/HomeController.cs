@@ -1,16 +1,15 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using home_site.Services;
+using Rozkaz.Services;
 using Microsoft.AspNetCore.Mvc;
-using norberto5.Models;
+using Rozkaz.Models;
 
-namespace norberto5.Controllers
+namespace Rozkaz.Controllers
 {
 	public class HomeController : Controller
 	{
 		public IActionResult Index() => CreatePdf();
 
-        [HttpGet]
         public FileStreamResult CreatePdf()
         {
             var orderPdfService = new OrderPdfService();

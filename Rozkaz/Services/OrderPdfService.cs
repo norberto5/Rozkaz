@@ -2,18 +2,17 @@
 using PdfSharp.Drawing.Layout;
 using PdfSharp.Pdf;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace home_site.Services
+namespace Rozkaz.Services
 {
     public class OrderPdfService
     {
         private const string orderFilename = "tmp.pdf";
-        private static readonly double pageLeftRightMargin = 80;
-        private static readonly double pageTopBottomMargin = 40;
+        private static readonly double pageLeftRightMargin = 55;
+        private static readonly double pageTopBottomMargin = 37;
 
-        private double realPageWidth => page.Width - pageLeftRightMargin * 2;
+        private double RealPageWidth => page.Width - pageLeftRightMargin * 2;
 
         private double actualHeight;
 
@@ -29,21 +28,19 @@ namespace home_site.Services
 
         private readonly XFont unitNameFont;
         private readonly XFont unitSecondaryFont;
-        private readonly XFont unitSecondaryBoldFont;
 
 
         public OrderPdfService()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            normalFont = new XFont("Museo 300", 10.5f, XFontStyle.Regular);
-            bold11Font = new XFont("Museo 300", 11f, XFontStyle.Bold);
-            boldFont = new XFont("Museo 300", 10.5f, XFontStyle.Bold);
-            italicFont = new XFont("Museo 300", 10.5f, XFontStyle.Italic);
+            normalFont = new XFont("Museo 300", 11, XFontStyle.Regular);
+            bold11Font = new XFont("Museo 300", 12, XFontStyle.Bold);
+            boldFont = new XFont("Museo 300", 11, XFontStyle.Bold);
+            italicFont = new XFont("Museo 300", 11, XFontStyle.Italic);
             titleFont = new XFont("Museo 300", 16, XFontStyle.Bold);
             unitNameFont = new XFont("Museo 300", 12, XFontStyle.Regular);
-            unitSecondaryFont = new XFont("Museo 300", 8, XFontStyle.Regular);
-            unitSecondaryBoldFont = new XFont("Museo 300", 8, XFontStyle.Bold);
+            unitSecondaryFont = new XFont("Museo 300", 7, XFontStyle.Regular);
         }
 
         private void Reset()
@@ -70,8 +67,8 @@ namespace home_site.Services
 
             DrawHeader();
 
-            DrawSingleLineString("Szczecin, 14 kwietnia 2019 r.", normalFont, XStringFormats.TopRight);
-            DrawText("Naczelny programista\nNorbert Piątkowski");
+            //DrawText("Naczelny programista\nNorbert Piątkowski");
+
             DrawTitle("Rozkaz L. 1/2019");
 
             DrawSpace(2);
@@ -103,16 +100,35 @@ namespace home_site.Services
         private void DrawHeader()
         {
             var logo = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
-            gfx.DrawImage(logo, new XRect(pageLeftRightMargin + 20, actualHeight, logo.PixelWidth / 6, logo.PixelHeight / 6));
-
-            gfx.BeginContainer();
-
-            gfx.DrawRoundedRectangle(new XSolidBrush(XColor.FromArgb(0xFF85A314)), new XRect(370, pageTopBottomMargin, 200, 50), new XSize(10, 10));
-            DrawSingleLineString("22 Drużyna Harcerska", unitNameFont, XStringFormats.Center, new XRect(370, pageTopBottomMargin - unitNameFont.Height / 2, 200, 50), XBrushes.White);
-            DrawSingleLineString("\"Błękitna\"", unitNameFont, XStringFormats.Center, new XRect(370, pageTopBottomMargin + unitNameFont.Height / 2, 200, 50), XBrushes.White);
+            gfx.DrawImage(logo, new XRect(pageLeftRightMargin, actualHeight, logo.PixelWidth / 6f, logo.PixelHeight / 6f));
 
 
-            actualHeight += logo.PixelHeight /6 + 20;
+            double unitMargin = 2;
+            double x = 360;
+            double y = pageTopBottomMargin;
+            double width = 180;
+            double height = unitNameFont.Height * 2 + unitMargin * 2;
+
+            var unitRectangleSize = new XRect(x, y, width, height);
+            gfx.DrawRoundedRectangle(new XSolidBrush(XColor.FromArgb(0xFF85A314)), unitRectangleSize, new XSize(10, 10));
+
+            x += unitMargin; y += unitMargin;
+            DrawSingleLineString("22 Drużyna Harcerska", unitNameFont, XStringFormats.TopLeft, new XRect(x, y, width, unitNameFont.Height), XBrushes.White);
+            DrawSingleLineString("\"Błękitna\"", unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
+
+
+            y = pageTopBottomMargin + unitRectangleSize.Height + unitMargin;
+            DrawSingleLineString("Chorągiew Zachodniopomorska ZHP", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
+            DrawSingleLineString("Hufiec Szczecin", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height, width, unitSecondaryFont.Height));
+            DrawSingleLineString("im. Pierwszych Szczecińskich Harcerzy", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 2, width, unitSecondaryFont.Height));
+            DrawSingleLineString("71-431 Szczecin, ul. Ogińskiego 15", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 3, width, unitSecondaryFont.Height));
+            DrawSingleLineString("szczecin@zhp.net.pl, szczecin.zhp.pl", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 4, width, unitSecondaryFont.Height));
+            DrawSingleLineString("Raiffeisen Bank 30 1750 0012 0000 0000 3165 0372", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 5, width, unitSecondaryFont.Height));
+
+
+            actualHeight = pageTopBottomMargin + logo.PixelHeight /6 + 40;
+            DrawSingleLineString("Szczecin, 14 kwietnia 2019 r.", normalFont, XStringFormats.TopRight);
+
             logo.Dispose();
         }
 
@@ -137,7 +153,7 @@ namespace home_site.Services
 
             if (rect.Width == 0)
             {
-                rect = new XRect(pageLeftRightMargin, actualHeight, realPageWidth, font.Height);
+                rect = new XRect(pageLeftRightMargin, actualHeight, RealPageWidth, font.Height);
             }
 
             gfx.DrawString(text, font, fontColor, rect, stringFormat);
@@ -148,14 +164,14 @@ namespace home_site.Services
         {
             if(rect.Width == 0)
             {
-                rect = new XRect(pageLeftRightMargin, actualHeight, realPageWidth, font.Height);
+                rect = new XRect(pageLeftRightMargin, actualHeight, RealPageWidth, font.Height);
             }
 
             string[] lines = text.Split('\n');
 
             foreach(string line in lines)
             {
-                if(gfx.MeasureString(line, font).Width > realPageWidth)
+                if(gfx.MeasureString(line, font).Width > RealPageWidth)
                 {
                     foreach(string splittedLine in SplitLine(line, font))
                     {
@@ -180,7 +196,7 @@ namespace home_site.Services
             string part = string.Empty;
             foreach (string word in words)
             {
-                if (gfx.MeasureString(part + " " + word, font).Width < realPageWidth)
+                if (gfx.MeasureString(part + " " + word, font).Width < RealPageWidth)
                 {
                     part += string.IsNullOrEmpty(part) ? word : " " + word;
                 }
