@@ -21,9 +21,9 @@ namespace Rozkaz.Services
         private XTextFormatter textFormatter;
 
         private readonly XFont normalFont;
-        private readonly XFont bold11Font;
+        private readonly XFont boldBiggerFont;
         private readonly XFont boldFont;
-        private readonly XFont italicFont;
+        private readonly XFont quoteFont;
         private readonly XFont titleFont;
 
         private readonly XFont unitNameFont;
@@ -35,9 +35,9 @@ namespace Rozkaz.Services
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             normalFont = new XFont("Museo 300", 11, XFontStyle.Regular);
-            bold11Font = new XFont("Museo 300", 12, XFontStyle.Bold);
+            boldBiggerFont = new XFont("Museo 300", 12, XFontStyle.Bold);
             boldFont = new XFont("Museo 300", 11, XFontStyle.Bold);
-            italicFont = new XFont("Museo 300", 11, XFontStyle.Italic);
+            quoteFont = new XFont("Museo 100", 11, XFontStyle.Regular);
             titleFont = new XFont("Museo 300", 16, XFontStyle.Bold);
             unitNameFont = new XFont("Museo 300", 12, XFontStyle.Regular);
             unitSecondaryFont = new XFont("Museo 300", 7, XFontStyle.Regular);
@@ -72,9 +72,9 @@ namespace Rozkaz.Services
             DrawTitle("Rozkaz L. 1/2019");
 
             DrawSpace(2);
-            DrawItalic("Wstęp okolicznościowy (święta państwowe, rocznice, szczególne wydarzenia w Związku)");
+            DrawQuote("Wstęp okolicznościowy (święta państwowe, rocznice, szczególne wydarzenia w Związku)");
             DrawSpace(2);
-            DrawItalic("Wyjątki z rozkazu komendanta Hufca Szczecin ZHP L. 0 / 2018 z dnia..... 2018 r.");
+            DrawQuote("Wyjątki z rozkazu komendanta Hufca Szczecin ZHP L. 0 / 2018 z dnia..... 2018 r.");
             DrawSpace(2);
 
             DrawBold11("1. Zarządzenia i informacje");
@@ -93,6 +93,7 @@ namespace Rozkaz.Services
             DrawText("2.1.1. Na wniosek Rady Drużyny mianuję sam. Janinę Barys przyboczną z dniem ………");
             DrawText("2.1.2. Na wniosek Rady Drużyny mianuję wyw. Tomasza Łęckiego kronikarzem drużyny z dniem ………");
 
+            Sign();
             Footer();
 
             document.Save(orderFilename);
@@ -101,8 +102,8 @@ namespace Rozkaz.Services
 
         private void Header()
         {
-            var logo = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
-            gfx.DrawImage(logo, new XRect(pageLeftRightMargin, actualHeight, logo.PixelWidth / 6f, logo.PixelHeight / 6f));
+            var identifier = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
+            gfx.DrawImage(identifier, new XRect(pageLeftRightMargin, actualHeight, identifier.PixelWidth / 6f, identifier.PixelHeight / 6f));
 
 
             double unitMargin = 2;
@@ -128,21 +129,45 @@ namespace Rozkaz.Services
             DrawSingleLineString("Raiffeisen Bank 30 1750 0012 0000 0000 3165 0372", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 5, width, unitSecondaryFont.Height));
 
 
-            actualHeight = pageTopBottomMargin + logo.PixelHeight /6 + 40;
+            actualHeight = pageTopBottomMargin + identifier.PixelHeight /6 + 40;
             DrawSingleLineString("Szczecin, 14 kwietnia 2019 r.", normalFont, XStringFormats.TopRight);
 
-            logo.Dispose();
+            identifier.Dispose();
         }
 
-        private void Footer()
+        private void Sign()
         {
-            double x = 360;
-            double y = actualHeight;
+            double x = 420;
+            double y = actualHeight + 30;
             double width = 100;
             double height = normalFont.Height;
 
             DrawSingleLineString("CZUWAJ!", normalFont, XStringFormats.Center, new XRect(x, y, width, height));
             DrawSingleLineString("Norbert Piątkowski", normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
+        }
+
+        private void Footer()
+        {
+            var logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
+
+            double width = 70;
+            double height = (float)  logo.PixelHeight / logo.PixelWidth * width;
+            double x = pageLeftRightMargin;
+            double y = page.Height - height - 5;
+
+            gfx.DrawImage(logo, new XRect(x, y, width, height));
+
+            var wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
+
+            width = wosm_wagggs.PixelWidth / 4f;
+            height = wosm_wagggs.PixelHeight / 4f;
+            x = page.Width - pageLeftRightMargin - width;
+            y = page.Height - height - 5;
+
+            gfx.DrawImage(wosm_wagggs, new XRect(x, y, width, height));
+
+            logo.Dispose();
+            wosm_wagggs.Dispose();
         }
 
         private void DrawSpace(int count) => DrawString(new string('\n', count-1), normalFont);
@@ -151,9 +176,9 @@ namespace Rozkaz.Services
 
         private void DrawBold(string text) => DrawString(text, boldFont);
 
-        private void DrawBold11(string text) => DrawString(text, bold11Font);
+        private void DrawBold11(string text) => DrawString(text, boldBiggerFont);
 
-        private void DrawItalic(string text) => DrawString(text, italicFont);
+        private void DrawQuote(string text) => DrawString(text, quoteFont);
 
         private void DrawTitle(string text) => DrawSingleLineString(text, titleFont, XStringFormats.TopCenter);
 
