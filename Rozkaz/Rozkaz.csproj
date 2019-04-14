@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>167dafe2-db04-451f-9913-4259ad04c503</UserSecretsId>
+    <Authors>Norbert Piątkowski</Authors>
+    <Company>norberto5.pl</Company>
   </PropertyGroup>
 
   <ItemGroup>
