@@ -35,9 +35,9 @@ namespace Rozkaz.Services
         private readonly XFont unitNameFont;
         private readonly XFont unitSecondaryFont;
 
-        private static XImage identifier = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
-        private static XImage logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
-        private static XImage wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
+        private static readonly XImage identifier = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
+        private static readonly XImage logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
+        private static readonly XImage wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
 
 
         public OrderPdfService()
