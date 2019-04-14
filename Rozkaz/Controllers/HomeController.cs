@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.IO;
 using Rozkaz.Services;
 using Microsoft.AspNetCore.Mvc;
 using Rozkaz.Models;
@@ -10,13 +9,14 @@ namespace Rozkaz.Controllers
 	{
 		public IActionResult Index() => CreatePdf();
 
-        public FileStreamResult CreatePdf()
+        public FileContentResult CreatePdf()
         {
             var orderPdfService = new OrderPdfService();
             string orderName = orderPdfService.CreateSampleOrder();
 
-            var stream = new FileStream(orderName, FileMode.Open);
-            return File(stream, "application/pdf");
+            byte[] bytes = System.IO.File.ReadAllBytes(orderName);
+            System.IO.File.Delete(orderName);
+            return File(bytes, "application/pdf");
         }
 
         public IActionResult About()
