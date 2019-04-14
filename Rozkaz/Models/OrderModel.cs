@@ -6,6 +6,10 @@ namespace Rozkaz.Models
     public class OrderModel
     {
         public OrderInfoModel Info { get; set; }
+
+        public string OccassionalIntro { get; set; }
+
+        public string ExceptionsFromAnotherOrder { get; set; }
     }
 
     public class OrderInfoModel

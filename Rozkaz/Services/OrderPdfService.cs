@@ -80,22 +80,30 @@ namespace Rozkaz.Services
                             "Naczelny programista",
                         }
                     }
-                }
+                },
+                OccassionalIntro = "Wstęp okolicznościowy (święta państwowe, rocznice, szczególne wydarzenia w Związku)",
+                ExceptionsFromAnotherOrder = "Wyjątki z rozkazu komendanta Hufca Szczecin ZHP L. 22 / 2019 z dnia..... 2019 r.",
             };
 
             PdfDocument document = Init(model);
 
             Header();
 
-            //DrawText("Naczelny programista\nNorbert Piątkowski");
+            //DrawText("L.dz. 15/2019");
 
             DrawTitle($"Rozkaz L. {info.OrderNumber}/{info.Date.Year}");
 
             DrawSpace(2);
-            DrawQuote("Wstęp okolicznościowy (święta państwowe, rocznice, szczególne wydarzenia w Związku)");
-            DrawSpace(2);
-            DrawQuote("Wyjątki z rozkazu komendanta Hufca Szczecin ZHP L. 0 / 2018 z dnia..... 2018 r.");
-            DrawSpace(2);
+            if(!string.IsNullOrEmpty(model.OccassionalIntro))
+            {
+                DrawQuote(model.OccassionalIntro);
+                DrawSpace(2);
+            }
+            if(!string.IsNullOrEmpty(model.ExceptionsFromAnotherOrder))
+            {
+                DrawQuote(model.ExceptionsFromAnotherOrder);
+                DrawSpace(2);
+            }
 
             DrawBiggerBold("1. Zarządzenia i informacje");
             DrawBold("1.1. Zarządzenia");
