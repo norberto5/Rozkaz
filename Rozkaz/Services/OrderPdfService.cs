@@ -1,6 +1,8 @@
 ﻿using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
 using PdfSharp.Pdf;
+using Rozkaz.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,6 +16,8 @@ namespace Rozkaz.Services
 
         private double RealPageWidth => page.Width - pageLeftRightMargin * 2;
 
+        private OrderModel model;
+        private OrderInfoModel info => model?.Info;
         private double actualHeight;
 
         private PdfPage page;
@@ -28,6 +32,10 @@ namespace Rozkaz.Services
 
         private readonly XFont unitNameFont;
         private readonly XFont unitSecondaryFont;
+
+        private readonly XImage identifier = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
+        private readonly XImage logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
+        private readonly XImage wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
 
 
         public OrderPdfService()
@@ -53,23 +61,35 @@ namespace Rozkaz.Services
 
         public string CreateSampleOrder()
         {
-            Reset();
+            var model = new OrderModel()
+            {
+                Info = new OrderInfoModel()
+                {
+                    Author = "Norbert Piątkowski",
+                    City = "Szczecin",
+                    Date = DateTime.Now,
+                    OrderNumber = 1,
+                    Unit = new UnitModel()
+                    {
+                        NameFirstLine = "22. Drużyna Harcerska",
+                        NameSecondLine = "\"Błękitna\"",
+                        SubtextLines = new List<string>()
+                        {
+                            "Chorągiew Zachodniopomorska ZHP",
+                            "Hufiec Szczecin",
+                            "Naczelny programista",
+                        }
+                    }
+                }
+            };
 
-            var document = new PdfDocument();
-            document.Info.Title = "Rozkaz L. 1/2019";
-            document.Info.Subject = "Rozkaz L. 1/2019";
-            document.Info.Author = "Norbert Piątkowski";
-            document.Info.Creator = "Rozkaz! © 2019 norberto5.pl Norbert Piątkowski";
-
-            page = document.AddPage();
-            gfx = XGraphics.FromPdfPage(page);
-            textFormatter = new XTextFormatter(gfx);
+            PdfDocument document = Init(model);
 
             Header();
 
             //DrawText("Naczelny programista\nNorbert Piątkowski");
 
-            DrawTitle("Rozkaz L. 1/2019");
+            DrawTitle($"Rozkaz L. {info.OrderNumber}/{info.Date.Year}");
 
             DrawSpace(2);
             DrawQuote("Wstęp okolicznościowy (święta państwowe, rocznice, szczególne wydarzenia w Związku)");
@@ -77,7 +97,7 @@ namespace Rozkaz.Services
             DrawQuote("Wyjątki z rozkazu komendanta Hufca Szczecin ZHP L. 0 / 2018 z dnia..... 2018 r.");
             DrawSpace(2);
 
-            DrawBold11("1. Zarządzenia i informacje");
+            DrawBiggerBold("1. Zarządzenia i informacje");
             DrawBold("1.1. Zarządzenia");
             DrawText("Przykład:");
             DrawText("1.1.1. Zwołuję Zlot Drużyny ..........");
@@ -87,7 +107,7 @@ namespace Rozkaz.Services
             DrawText("1.2.2. Informuję o decyzji Rady Drużyny z dnia …. w sprawie ….. Treść decyzji stanowi załącznik nr 1 do niniejszego rozkazu. ");
 
             DrawSpace(1);
-            DrawBold11("2. Drużyna");
+            DrawBiggerBold("2. Drużyna");
             DrawBold("2.1. Mianowania funkcyjnych");
             DrawText("Przykład:");
             DrawText("2.1.1. Na wniosek Rady Drużyny mianuję sam. Janinę Barys przyboczną z dniem ………");
@@ -100,11 +120,28 @@ namespace Rozkaz.Services
             return orderFilename;
         }
 
+        private PdfDocument Init(OrderModel model)
+        {
+            Reset();
+
+            this.model = model;
+
+            var document = new PdfDocument();
+            document.Info.Title = $"Rozkaz L. {info.OrderNumber}/{info.Date.Year}";
+            document.Info.Subject = $"Rozkaz L. {info.OrderNumber}/{info.Date.Year}";
+            document.Info.Author = info.Author;
+            document.Info.Creator = "Rozkaz! © 2019 norberto5.pl Norbert Piątkowski";
+
+            page = document.AddPage();
+            gfx = XGraphics.FromPdfPage(page);
+            textFormatter = new XTextFormatter(gfx);
+
+            return document;
+        }
+
         private void Header()
         {
-            var identifier = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
             gfx.DrawImage(identifier, new XRect(pageLeftRightMargin, actualHeight, identifier.PixelWidth / 6f, identifier.PixelHeight / 6f));
-
 
             double unitMargin = 2;
             double x = 360;
@@ -116,23 +153,20 @@ namespace Rozkaz.Services
             gfx.DrawRoundedRectangle(new XSolidBrush(XColor.FromArgb(0xFF85A314)), unitRectangleSize, new XSize(10, 10));
 
             x += unitMargin; y += unitMargin;
-            DrawSingleLineString("22 Drużyna Harcerska", unitNameFont, XStringFormats.TopLeft, new XRect(x, y, width, unitNameFont.Height), XBrushes.White);
-            DrawSingleLineString("\"Błękitna\"", unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
+            DrawSingleLineString(info.Unit?.NameFirstLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y, width, unitNameFont.Height), XBrushes.White);
+            DrawSingleLineString(info.Unit?.NameSecondLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
 
 
             y = pageTopBottomMargin + unitRectangleSize.Height + unitMargin;
-            DrawSingleLineString("Chorągiew Zachodniopomorska ZHP", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
-            DrawSingleLineString("Hufiec Szczecin", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height, width, unitSecondaryFont.Height));
-            DrawSingleLineString("im. Pierwszych Szczecińskich Harcerzy", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 2, width, unitSecondaryFont.Height));
-            DrawSingleLineString("71-431 Szczecin, ul. Ogińskiego 15", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 3, width, unitSecondaryFont.Height));
-            DrawSingleLineString("szczecin@zhp.net.pl, szczecin.zhp.pl", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 4, width, unitSecondaryFont.Height));
-            DrawSingleLineString("Raiffeisen Bank 30 1750 0012 0000 0000 3165 0372", unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y + unitSecondaryFont.Height * 5, width, unitSecondaryFont.Height));
 
+            foreach(string subline in info.Unit?.SubtextLines)
+            {
+                DrawSingleLineString(subline, unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
+                y += unitSecondaryFont.Height;
+            }
 
             actualHeight = pageTopBottomMargin + identifier.PixelHeight /6 + 40;
-            DrawSingleLineString("Szczecin, 14 kwietnia 2019 r.", normalFont, XStringFormats.TopRight);
-
-            identifier.Dispose();
+            DrawSingleLineString($"{info.City ?? string.Empty}, {info.Date.ToShortDateString() } r.", normalFont, XStringFormats.TopRight);
         }
 
         private void Sign()
@@ -143,13 +177,11 @@ namespace Rozkaz.Services
             double height = normalFont.Height;
 
             DrawSingleLineString("CZUWAJ!", normalFont, XStringFormats.Center, new XRect(x, y, width, height));
-            DrawSingleLineString("Norbert Piątkowski", normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
+            DrawSingleLineString(info.Author ?? string.Empty, normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
         }
 
         private void Footer()
         {
-            var logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
-
             double width = 70;
             double height = (float)  logo.PixelHeight / logo.PixelWidth * width;
             double x = pageLeftRightMargin;
@@ -157,7 +189,6 @@ namespace Rozkaz.Services
 
             gfx.DrawImage(logo, new XRect(x, y, width, height));
 
-            var wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
 
             width = wosm_wagggs.PixelWidth / 4f;
             height = wosm_wagggs.PixelHeight / 4f;
@@ -165,9 +196,6 @@ namespace Rozkaz.Services
             y = page.Height - height - 5;
 
             gfx.DrawImage(wosm_wagggs, new XRect(x, y, width, height));
-
-            logo.Dispose();
-            wosm_wagggs.Dispose();
         }
 
         private void DrawSpace(int count) => DrawString(new string('\n', count-1), normalFont);
@@ -176,7 +204,7 @@ namespace Rozkaz.Services
 
         private void DrawBold(string text) => DrawString(text, boldFont);
 
-        private void DrawBold11(string text) => DrawString(text, boldBiggerFont);
+        private void DrawBiggerBold(string text) => DrawString(text, boldBiggerFont);
 
         private void DrawQuote(string text) => DrawString(text, quoteFont);
 
