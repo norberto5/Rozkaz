@@ -65,7 +65,7 @@ namespace Rozkaz.Services
             gfx = XGraphics.FromPdfPage(page);
             textFormatter = new XTextFormatter(gfx);
 
-            DrawHeader();
+            Header();
 
             //DrawText("Naczelny programista\nNorbert Piątkowski");
 
@@ -93,11 +93,13 @@ namespace Rozkaz.Services
             DrawText("2.1.1. Na wniosek Rady Drużyny mianuję sam. Janinę Barys przyboczną z dniem ………");
             DrawText("2.1.2. Na wniosek Rady Drużyny mianuję wyw. Tomasza Łęckiego kronikarzem drużyny z dniem ………");
 
+            Footer();
+
             document.Save(orderFilename);
             return orderFilename;
         }
 
-        private void DrawHeader()
+        private void Header()
         {
             var logo = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
             gfx.DrawImage(logo, new XRect(pageLeftRightMargin, actualHeight, logo.PixelWidth / 6f, logo.PixelHeight / 6f));
@@ -130,6 +132,17 @@ namespace Rozkaz.Services
             DrawSingleLineString("Szczecin, 14 kwietnia 2019 r.", normalFont, XStringFormats.TopRight);
 
             logo.Dispose();
+        }
+
+        private void Footer()
+        {
+            double x = 360;
+            double y = actualHeight;
+            double width = 100;
+            double height = normalFont.Height;
+
+            DrawSingleLineString("CZUWAJ!", normalFont, XStringFormats.Center, new XRect(x, y, width, height));
+            DrawSingleLineString("Norbert Piątkowski", normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
         }
 
         private void DrawSpace(int count) => DrawString(new string('\n', count-1), normalFont);
