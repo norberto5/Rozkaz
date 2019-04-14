@@ -4,6 +4,8 @@ using PdfSharp.Pdf;
 using Rozkaz.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Text;
 using System.Text;
 
 namespace Rozkaz.Services
@@ -42,13 +44,17 @@ namespace Rozkaz.Services
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            normalFont = new XFont("Museo 300", 11, XFontStyle.Regular);
-            boldBiggerFont = new XFont("Museo 300", 12, XFontStyle.Bold);
-            boldFont = new XFont("Museo 300", 11, XFontStyle.Bold);
-            quoteFont = new XFont("Museo 100", 11, XFontStyle.Regular);
-            titleFont = new XFont("Museo 300", 16, XFontStyle.Bold);
-            unitNameFont = new XFont("Museo 300", 12, XFontStyle.Regular);
-            unitSecondaryFont = new XFont("Museo 300", 7, XFontStyle.Regular);
+            var pfc = new PrivateFontCollection();
+            pfc.AddFontFile("wwwroot/fonts/Museo 100.otf");
+            pfc.AddFontFile("wwwroot/fonts/Museo 300.otf");
+
+            normalFont = new XFont(new Font(pfc.Families[1], 11, FontStyle.Regular, GraphicsUnit.World));
+            quoteFont = new XFont(new Font(pfc.Families[0], 11, FontStyle.Regular, GraphicsUnit.World));
+            boldFont = new XFont(new Font(pfc.Families[1], 11, FontStyle.Bold, GraphicsUnit.World));
+            boldBiggerFont = new XFont(new Font(pfc.Families[1], 12, FontStyle.Bold, GraphicsUnit.World));
+            titleFont = new XFont(new Font(pfc.Families[1], 16, FontStyle.Bold, GraphicsUnit.World));
+            unitNameFont = new XFont(new Font(pfc.Families[1], 12, FontStyle.Regular, GraphicsUnit.World));
+            unitSecondaryFont = new XFont(new Font(pfc.Families[1], 7, FontStyle.Regular, GraphicsUnit.World));
         }
 
         private void Reset()
@@ -174,7 +180,7 @@ namespace Rozkaz.Services
             }
 
             actualHeight = pageTopBottomMargin + identifier.PixelHeight /6 + 40;
-            DrawSingleLineString($"{Info.City ?? string.Empty}, {Info.Date.ToShortDateString() } r.", normalFont, XStringFormats.TopRight);
+            DrawSingleLineString($"{Info.City ?? string.Empty}, {Info.Date.ToString("dd.MM.yyyy")} r.", normalFont, XStringFormats.TopRight);
         }
 
         private void Sign()
