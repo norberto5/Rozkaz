@@ -17,7 +17,7 @@ namespace Rozkaz.Services
         private double RealPageWidth => page.Width - pageLeftRightMargin * 2;
 
         private OrderModel model;
-        private OrderInfoModel info => model?.Info;
+        private OrderInfoModel Info => model?.Info;
         private double actualHeight;
 
         private PdfPage page;
@@ -33,9 +33,9 @@ namespace Rozkaz.Services
         private readonly XFont unitNameFont;
         private readonly XFont unitSecondaryFont;
 
-        private readonly XImage identifier = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
-        private readonly XImage logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
-        private readonly XImage wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
+        private static XImage identifier = XImage.FromFile("wwwroot/images/identyfikatorZHP-zielony.png");
+        private static XImage logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
+        private static XImage wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
 
 
         public OrderPdfService()
@@ -91,7 +91,7 @@ namespace Rozkaz.Services
 
             //DrawText("L.dz. 15/2019");
 
-            DrawTitle($"Rozkaz L. {info.OrderNumber}/{info.Date.Year}");
+            DrawTitle($"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}");
 
             DrawSpace(2);
             if(!string.IsNullOrEmpty(model.OccassionalIntro))
@@ -135,9 +135,9 @@ namespace Rozkaz.Services
             this.model = model;
 
             var document = new PdfDocument();
-            document.Info.Title = $"Rozkaz L. {info.OrderNumber}/{info.Date.Year}";
-            document.Info.Subject = $"Rozkaz L. {info.OrderNumber}/{info.Date.Year}";
-            document.Info.Author = info.Author;
+            document.Info.Title = $"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}";
+            document.Info.Subject = $"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}";
+            document.Info.Author = Info.Author;
             document.Info.Creator = "Rozkaz! © 2019 norberto5.pl Norbert Piątkowski";
 
             page = document.AddPage();
@@ -161,20 +161,20 @@ namespace Rozkaz.Services
             gfx.DrawRoundedRectangle(new XSolidBrush(XColor.FromArgb(0xFF85A314)), unitRectangleSize, new XSize(10, 10));
 
             x += unitMargin; y += unitMargin;
-            DrawSingleLineString(info.Unit?.NameFirstLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y, width, unitNameFont.Height), XBrushes.White);
-            DrawSingleLineString(info.Unit?.NameSecondLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
+            DrawSingleLineString(Info.Unit?.NameFirstLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y, width, unitNameFont.Height), XBrushes.White);
+            DrawSingleLineString(Info.Unit?.NameSecondLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
 
 
             y = pageTopBottomMargin + unitRectangleSize.Height + unitMargin;
 
-            foreach(string subline in info.Unit?.SubtextLines)
+            foreach(string subline in Info.Unit?.SubtextLines)
             {
                 DrawSingleLineString(subline, unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
                 y += unitSecondaryFont.Height;
             }
 
             actualHeight = pageTopBottomMargin + identifier.PixelHeight /6 + 40;
-            DrawSingleLineString($"{info.City ?? string.Empty}, {info.Date.ToShortDateString() } r.", normalFont, XStringFormats.TopRight);
+            DrawSingleLineString($"{Info.City ?? string.Empty}, {Info.Date.ToShortDateString() } r.", normalFont, XStringFormats.TopRight);
         }
 
         private void Sign()
@@ -185,7 +185,7 @@ namespace Rozkaz.Services
             double height = normalFont.Height;
 
             DrawSingleLineString("CZUWAJ!", normalFont, XStringFormats.Center, new XRect(x, y, width, height));
-            DrawSingleLineString(info.Author ?? string.Empty, normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
+            DrawSingleLineString(Info.Author ?? string.Empty, normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
         }
 
         private void Footer()

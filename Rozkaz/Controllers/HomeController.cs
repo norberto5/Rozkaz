@@ -7,7 +7,7 @@ namespace Rozkaz.Controllers
 {
 	public class HomeController : Controller
 	{
-		public IActionResult Index() => CreatePdf();
+        public IActionResult Index() => CreatePdf();
 
         public FileContentResult CreatePdf()
         {
