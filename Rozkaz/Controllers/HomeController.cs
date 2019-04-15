@@ -9,10 +9,20 @@ namespace Rozkaz.Controllers
 	{
         public IActionResult Index() => View();
 
-        public FileContentResult CreatePdf()
+        public FileContentResult SampleOrder()
         {
             var orderPdfService = new OrderPdfService();
             string orderName = orderPdfService.CreateSampleOrder();
+
+            byte[] bytes = System.IO.File.ReadAllBytes(orderName);
+            System.IO.File.Delete(orderName);
+            return File(bytes, "application/pdf");
+        }
+
+        public FileContentResult GenerateDemoOrder(OrderModel model)
+        {
+            var orderPdfService = new OrderPdfService();
+            string orderName = orderPdfService.CreateOrder(model);
 
             byte[] bytes = System.IO.File.ReadAllBytes(orderName);
             System.IO.File.Delete(orderName);

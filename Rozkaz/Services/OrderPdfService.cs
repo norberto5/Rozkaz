@@ -259,7 +259,7 @@ namespace Rozkaz.Services
 
             y = pageTopMargin + unitRectangleSize.Height + unitMargin;
 
-            foreach(string subline in Info.Unit?.SubtextLines)
+            foreach(string subline in Info.Unit?.SubtextLines ?? new List<string>())
             {
                 DrawSpecialSingleLineString(subline, unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
                 y += unitSecondaryFont.Height;
