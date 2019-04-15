@@ -156,6 +156,11 @@ namespace Rozkaz.Services
                 }
             };
 
+            return CreateOrder(model);
+        }
+
+        public string CreateOrder(OrderModel model)
+        {
             PdfDocument document = Init(model);
 
             Header();
@@ -166,12 +171,12 @@ namespace Rozkaz.Services
             DrawTitle($"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}");
 
             DrawSpace(2);
-            if(!string.IsNullOrEmpty(model.OccassionalIntro))
+            if (!string.IsNullOrEmpty(model.OccassionalIntro))
             {
                 DrawQuote(model.OccassionalIntro);
                 DrawSpace(2);
             }
-            if(!string.IsNullOrEmpty(model.ExceptionsFromAnotherOrder))
+            if (!string.IsNullOrEmpty(model.ExceptionsFromAnotherOrder))
             {
                 DrawQuote(model.ExceptionsFromAnotherOrder);
                 DrawSpace(2);
@@ -179,19 +184,19 @@ namespace Rozkaz.Services
 
             uint categoryNumber = 0;
 
-            foreach(OrderCategory category in model.Categories)
+            foreach (OrderCategory category in model.Categories)
             {
                 categoryNumber++;
                 DrawBiggerBold($"{categoryNumber}. {category.Name}");
 
                 uint subcategoryNumber = 0;
-                foreach(OrderSubcategory subcategory in category.Subcategories)
+                foreach (OrderSubcategory subcategory in category.Subcategories)
                 {
                     subcategoryNumber++;
                     DrawBold($"{categoryNumber}.{subcategoryNumber}. {subcategory.Name}");
 
                     uint elementNumber = 0;
-                    foreach(SubcategoryElement element in subcategory.Elements)
+                    foreach (SubcategoryElement element in subcategory.Elements)
                     {
                         elementNumber++;
                         DrawText($"{categoryNumber}.{subcategoryNumber}.{elementNumber}. {element.Description}");
@@ -248,20 +253,20 @@ namespace Rozkaz.Services
             gfx.DrawRoundedRectangle(new XSolidBrush(XColor.FromArgb(0xFF85A314)), unitRectangleSize, new XSize(10, 10));
 
             x += unitMargin; y += unitMargin;
-            DrawSingleLineString(Info.Unit?.NameFirstLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y, width, unitNameFont.Height), XBrushes.White);
-            DrawSingleLineString(Info.Unit?.NameSecondLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
+            DrawSpecialSingleLineString(Info.Unit?.NameFirstLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y, width, unitNameFont.Height), XBrushes.White);
+            DrawSpecialSingleLineString(Info.Unit?.NameSecondLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
 
 
             y = pageTopMargin + unitRectangleSize.Height + unitMargin;
 
             foreach(string subline in Info.Unit?.SubtextLines)
             {
-                DrawSingleLineString(subline, unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
+                DrawSpecialSingleLineString(subline, unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
                 y += unitSecondaryFont.Height;
             }
 
             actualHeight = pageTopMargin + identifier.PixelHeight /6 + 40;
-            DrawSingleLineString($"{Info.City ?? string.Empty}, {Info.Date.ToString("dd.MM.yyyy")} r.", normalFont, XStringFormats.TopRight);
+            DrawSpecialSingleLineString($"{Info.City ?? string.Empty}, {Info.Date.ToString("dd.MM.yyyy")} r.", normalFont, XStringFormats.TopRight);
         }
 
         private void Sign()
@@ -271,8 +276,8 @@ namespace Rozkaz.Services
             double width = 100;
             double height = normalFont.Height;
 
-            DrawSingleLineString("CZUWAJ!", normalFont, XStringFormats.Center, new XRect(x, y, width, height));
-            DrawSingleLineString(Info.Author ?? string.Empty, normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
+            DrawSpecialSingleLineString("CZUWAJ!", normalFont, XStringFormats.Center, new XRect(x, y, width, height));
+            DrawSpecialSingleLineString(Info.Author ?? string.Empty, normalFont, XStringFormats.Center, new XRect(x, y + normalFont.Height + 5, width, height));
         }
 
         private void Footer()
@@ -303,9 +308,9 @@ namespace Rozkaz.Services
 
         private void DrawQuote(string text) => DrawString(text, quoteFont);
 
-        private void DrawTitle(string text) => DrawSingleLineString(text, titleFont, XStringFormats.TopCenter);
+        private void DrawTitle(string text) => DrawSpecialSingleLineString(text, titleFont, XStringFormats.TopCenter);
 
-        private void DrawSingleLineString(string text, XFont font, XStringFormat stringFormat, XRect rect = new XRect(), XBrush fontColor = null)
+        private void DrawSpecialSingleLineString(string text, XFont font, XStringFormat stringFormat, XRect rect = new XRect(), XBrush fontColor = null)
         {
             if(fontColor == null)
             {
