@@ -41,7 +41,6 @@ namespace Rozkaz.Services
         private static readonly XImage logo = XImage.FromFile("wwwroot/images/logo_zhp_zielone.png");
         private static readonly XImage wosm_wagggs = XImage.FromFile("wwwroot/images/wosm_wagggs.png");
 
-
         public OrderPdfService()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -57,15 +56,6 @@ namespace Rozkaz.Services
             titleFont = new XFont(new Font(pfc.Families[1], 16, FontStyle.Bold, GraphicsUnit.World));
             unitNameFont = new XFont(new Font(pfc.Families[1], 12, FontStyle.Regular, GraphicsUnit.World));
             unitSecondaryFont = new XFont(new Font(pfc.Families[1], 7, FontStyle.Regular, GraphicsUnit.World));
-        }
-
-        private void Reset()
-        {
-            actualHeight = pageTopMargin;
-            document = null;
-            page = null;
-            gfx = null;
-            textFormatter = null;
         }
 
         public string CreateSampleOrder()
@@ -168,18 +158,18 @@ namespace Rozkaz.Services
 
             //DrawText("L.dz. 15/2019");
 
-            DrawTitle($"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}");
+            DrawSpecialSingleLineString($"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}", titleFont, XStringFormats.TopCenter);
 
-            DrawSpace(2);
+            Space(2);
             if (!string.IsNullOrEmpty(model.OccassionalIntro))
             {
-                DrawQuote(model.OccassionalIntro);
-                DrawSpace(2);
+                DrawString(model.OccassionalIntro, quoteFont);
+                Space(2);
             }
             if (!string.IsNullOrEmpty(model.ExceptionsFromAnotherOrder))
             {
-                DrawQuote(model.ExceptionsFromAnotherOrder);
-                DrawSpace(2);
+                DrawString(model.ExceptionsFromAnotherOrder, quoteFont);
+                Space(2);
             }
 
             uint categoryNumber = 0;
@@ -187,28 +177,37 @@ namespace Rozkaz.Services
             foreach (OrderCategory category in model.Categories)
             {
                 categoryNumber++;
-                DrawBiggerBold($"{categoryNumber}. {category.Name}");
+                DrawString($"{categoryNumber}. {category.Name}", boldBiggerFont);
 
                 uint subcategoryNumber = 0;
                 foreach (OrderSubcategory subcategory in category.Subcategories)
                 {
                     subcategoryNumber++;
-                    DrawBold($"{categoryNumber}.{subcategoryNumber}. {subcategory.Name}");
+                    DrawString($"{categoryNumber}.{subcategoryNumber}. {subcategory.Name}", boldFont);
 
                     uint elementNumber = 0;
                     foreach (SubcategoryElement element in subcategory.Elements)
                     {
                         elementNumber++;
-                        DrawText($"{categoryNumber}.{subcategoryNumber}.{elementNumber}. {element.Description}");
+                        DrawString($"{categoryNumber}.{subcategoryNumber}.{elementNumber}. {element.Description}", normalFont);
                     }
                 }
-                DrawSpace(1);
+                Space(1);
             }
 
             Sign();
 
             document.Save(orderFilename);
             return orderFilename;
+        }
+
+        private void Reset()
+        {
+            actualHeight = pageTopMargin;
+            document = null;
+            page = null;
+            gfx = null;
+            textFormatter = null;
         }
 
         private PdfDocument Init(OrderModel model)
@@ -298,17 +297,7 @@ namespace Rozkaz.Services
             gfx.DrawImage(wosm_wagggs, new XRect(x, y, width, height));
         }
 
-        private void DrawSpace(int count) => DrawString(new string('\n', count-1), normalFont);
-
-        private void DrawText(string text) => DrawString(text, normalFont);
-
-        private void DrawBold(string text) => DrawString(text, boldFont);
-
-        private void DrawBiggerBold(string text) => DrawString(text, boldBiggerFont);
-
-        private void DrawQuote(string text) => DrawString(text, quoteFont);
-
-        private void DrawTitle(string text) => DrawSpecialSingleLineString(text, titleFont, XStringFormats.TopCenter);
+        private void Space(int count) => DrawString(new string('\n', count-1), normalFont);
 
         private void DrawSpecialSingleLineString(string text, XFont font, XStringFormat stringFormat, XRect rect = new XRect(), XBrush fontColor = null)
         {
