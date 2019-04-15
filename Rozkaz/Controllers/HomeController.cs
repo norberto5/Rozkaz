@@ -7,7 +7,7 @@ namespace Rozkaz.Controllers
 {
 	public class HomeController : Controller
 	{
-        public IActionResult Index() => CreatePdf();
+        public IActionResult Index() => View();
 
         public FileContentResult CreatePdf()
         {
@@ -19,14 +19,9 @@ namespace Rozkaz.Controllers
             return File(bytes, "application/pdf");
         }
 
-        public IActionResult About()
-		{
-			ViewData["Message"] = "Uczę się ASP.NET Core MVC, nie bijcie ;c";
+        public IActionResult About() => View();
 
-			return View();
-		}
-
-		public IActionResult Contact() => View();
+        public IActionResult Contact() => View();
 
 		public IActionResult Privacy() => View();
 
