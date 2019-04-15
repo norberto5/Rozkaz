@@ -14,7 +14,8 @@ namespace Rozkaz.Services
     {
         private const string orderFilename = "tmp.pdf";
         private static readonly double pageLeftRightMargin = 55;
-        private static readonly double pageTopBottomMargin = 37;
+        private static readonly double pageTopMargin = 37;
+        private static readonly double pageBottomMargin = 110;
 
         private double RealPageWidth => page.Width - pageLeftRightMargin * 2;
 
@@ -22,6 +23,7 @@ namespace Rozkaz.Services
         private OrderInfoModel Info => model?.Info;
         private double actualHeight;
 
+        private PdfDocument document;
         private PdfPage page;
         private XGraphics gfx;
         private XTextFormatter textFormatter;
@@ -59,7 +61,8 @@ namespace Rozkaz.Services
 
         private void Reset()
         {
-            actualHeight = pageTopBottomMargin;
+            actualHeight = pageTopMargin;
+            document = null;
             page = null;
             gfx = null;
             textFormatter = null;
@@ -109,6 +112,45 @@ namespace Rozkaz.Services
                         {
                             new SubcategoryElement("Na wniosek Rady Drużyny mianuję sam. Janinę Barys przyboczną z dniem ......."),
                             new SubcategoryElement("Na wniosek Rady Drużyny mianuję wyw. Tomasza Łęckiego kronikarzem drużyny z dniem .......")
+                        }),
+                        new OrderSubcategory("Zwolnienia funkcyjnych", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Na wniosek Rady Drużyny z dnia …… zwalniam ćw. Jacka Orła z funkcji zastępowego zastępu „Twardych” z dniem ………"),
+                            new SubcategoryElement("Na wniosek Rady Drużyny zwalniam HO Piotra Kanię z funkcji przybocznego z dniem ………")
+                        }),
+                        new OrderSubcategory("Powołania do rady drużyny", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Powołuję w skład Rady Drużyny sam. Janinę Barys, przyboczną, z dniem ………")
+                        }),
+                        new OrderSubcategory("Zwolnienia z rady drużyny", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Zwalniam ze składu Rady Drużyny ćw. Jacka Orła z dniem ………")
+                        }),
+                    }),
+                    new OrderCategory("Zastępy", new List<OrderSubcategory>()
+                    {
+                        new OrderSubcategory("Utworzenia zastępu", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Na wniosek Rady Drużyny powołuję zastęp „Sępów” w składzie:\n… – zastępowa \n… ")
+                        }),
+                        new OrderSubcategory("Rozwiązanie zastępu", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Na wniosek Rady Drużyny rozwiązuję zastęp „Sępów”. Dotychczasowi członkowie zastępu zostają przydzieleni do następujących zastępów:\n...")
+                        }),
+                        new OrderSubcategory("Zmiana składu zastępów", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Przenoszę z zastępu „Orłów” do zastępu „Sokołów” wyw. Jana Kota.")
+                        })
+                    }),
+                    new OrderCategory("Instrumenty metodyczne", new List<OrderSubcategory>()
+                    {
+                        new OrderSubcategory("Zamknięcie próby na stopień", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Na wniosek Rady Drużyny z dnia ……… zamykam próbę i przyznaję stopień ćwika odkr. Antoniemu Szpakowi.")
+                        }),
+                        new OrderSubcategory("Otwarcie próby na stopień", new List<SubcategoryElement>()
+                        {
+                            new SubcategoryElement("Na wniosek Rady Drużyny z dnia ………. otwieram próbę na stopień ćwika:\nodkr. Janowi Nowakowi\nwyw. Tomaszowi Kowalskiemu")
                         })
                     })
                 }
@@ -117,6 +159,7 @@ namespace Rozkaz.Services
             PdfDocument document = Init(model);
 
             Header();
+            Footer();
 
             //DrawText("L.dz. 15/2019");
 
@@ -158,7 +201,6 @@ namespace Rozkaz.Services
             }
 
             Sign();
-            Footer();
 
             document.Save(orderFilename);
             return orderFilename;
@@ -170,7 +212,7 @@ namespace Rozkaz.Services
 
             this.model = model;
 
-            var document = new PdfDocument();
+            document = new PdfDocument();
             document.Info.Title = $"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}";
             document.Info.Subject = $"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}";
             document.Info.Author = Info.Author;
@@ -183,13 +225,22 @@ namespace Rozkaz.Services
             return document;
         }
 
+        private void NextPage()
+        {
+            page = document.AddPage();
+            gfx = XGraphics.FromPdfPage(page);
+            textFormatter = new XTextFormatter(gfx);
+            Footer();
+            actualHeight = pageTopMargin;
+        }
+
         private void Header()
         {
             gfx.DrawImage(identifier, new XRect(pageLeftRightMargin, actualHeight, identifier.PixelWidth / 6f, identifier.PixelHeight / 6f));
 
             double unitMargin = 2;
             double x = 360;
-            double y = pageTopBottomMargin;
+            double y = pageTopMargin;
             double width = 180;
             double height = unitNameFont.Height * 2 + unitMargin * 2;
 
@@ -201,7 +252,7 @@ namespace Rozkaz.Services
             DrawSingleLineString(Info.Unit?.NameSecondLine ?? string.Empty, unitNameFont, XStringFormats.TopLeft, new XRect(x, y + unitNameFont.Height, width, unitNameFont.Height), XBrushes.White);
 
 
-            y = pageTopBottomMargin + unitRectangleSize.Height + unitMargin;
+            y = pageTopMargin + unitRectangleSize.Height + unitMargin;
 
             foreach(string subline in Info.Unit?.SubtextLines)
             {
@@ -209,7 +260,7 @@ namespace Rozkaz.Services
                 y += unitSecondaryFont.Height;
             }
 
-            actualHeight = pageTopBottomMargin + identifier.PixelHeight /6 + 40;
+            actualHeight = pageTopMargin + identifier.PixelHeight /6 + 40;
             DrawSingleLineString($"{Info.City ?? string.Empty}, {Info.Date.ToString("dd.MM.yyyy")} r.", normalFont, XStringFormats.TopRight);
         }
 
@@ -285,17 +336,25 @@ namespace Rozkaz.Services
                 {
                     foreach(string splittedLine in SplitLine(line, font))
                     {
-                        rect.Y = actualHeight;
-                        textFormatter.DrawString(splittedLine, font, XBrushes.Black, rect);
-                        actualHeight += font.Height;
+                        WriteLine(splittedLine, font, rect);
                     }
                 }
                 else
                 {
-                    rect.Y = actualHeight;
-                    textFormatter.DrawString(line, font, XBrushes.Black, rect);
-                    actualHeight += font.Height;
+                    WriteLine(line, font, rect);
                 }
+            }
+        }
+
+        private void WriteLine(string text, XFont font, XRect rect)
+        {
+            rect.Y = actualHeight;
+            textFormatter.DrawString(text, font, XBrushes.Black, rect);
+            actualHeight += font.Height;
+
+            if (actualHeight > page.Height - pageBottomMargin)
+            {
+                NextPage();
             }
         }
 
