@@ -13,9 +13,9 @@ namespace Rozkaz.Services
     public class OrderPdfService
     {
         private const string orderFilename = "tmp.pdf";
-        private static readonly double pageLeftRightMargin = 55;
-        private static readonly double pageTopMargin = 37;
-        private static readonly double pageBottomMargin = 110;
+        private const double pageLeftRightMargin = 55;
+        private const double pageTopMargin = 37;
+        private const double pageBottomMargin = 110;
 
         private double RealPageWidth => page.Width - pageLeftRightMargin * 2;
 
