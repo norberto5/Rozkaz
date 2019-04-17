@@ -5,13 +5,14 @@ using PdfSharp.Pdf;
 using Rozkaz.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Rozkaz.Services
 {
     public class OrderPdfService
     {
-        private const string orderFilename = "tmp.pdf";
+        private static readonly string orderFilename = $"{Path.GetTempPath()}/tmp.pdf";
         private const string museo100 = "Museo 100";
         private const string museo300 = "Museo 300";
 
