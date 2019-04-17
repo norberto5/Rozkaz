@@ -23,12 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="wwwroot\fonts\Museo 100.otf">
+    <EmbeddedResource Include="wwwroot\fonts\Museo 100.otf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="wwwroot\fonts\Museo 300.otf">
+    </EmbeddedResource>
+    <EmbeddedResource Include="wwwroot\fonts\Museo 300.otf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

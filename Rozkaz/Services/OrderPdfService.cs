@@ -1,11 +1,10 @@
 ﻿using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
+using PdfSharp.Fonts;
 using PdfSharp.Pdf;
 using Rozkaz.Models;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Text;
 using System.Text;
 
 namespace Rozkaz.Services
@@ -13,11 +12,16 @@ namespace Rozkaz.Services
     public class OrderPdfService
     {
         private const string orderFilename = "tmp.pdf";
+        private const string museo100 = "Museo 100";
+        private const string museo300 = "Museo 300";
+
         private const double pageLeftRightMargin = 55;
         private const double pageTopMargin = 37;
         private const double pageBottomMargin = 110;
 
         private double RealPageWidth => page.Width - pageLeftRightMargin * 2;
+
+        private string OrderString => $"Rozkaz L. {Info?.OrderNumber}/{Info?.Date.Year}";
 
         private OrderModel model;
         private OrderInfoModel Info => model?.Info;
@@ -45,17 +49,19 @@ namespace Rozkaz.Services
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var pfc = new PrivateFontCollection();
-            pfc.AddFontFile("wwwroot/fonts/Museo 100.otf");
-            pfc.AddFontFile("wwwroot/fonts/Museo 300.otf");
+            var fontResolver = new OrderFontResolver();
+            GlobalFontSettings.FontResolver = fontResolver;
 
-            normalFont = new XFont(new Font(pfc.Families[1], 11, FontStyle.Regular, GraphicsUnit.World));
-            quoteFont = new XFont(new Font(pfc.Families[0], 11, FontStyle.Regular, GraphicsUnit.World));
-            boldFont = new XFont(new Font(pfc.Families[1], 11, FontStyle.Bold, GraphicsUnit.World));
-            boldBiggerFont = new XFont(new Font(pfc.Families[1], 12, FontStyle.Bold, GraphicsUnit.World));
-            titleFont = new XFont(new Font(pfc.Families[1], 16, FontStyle.Bold, GraphicsUnit.World));
-            unitNameFont = new XFont(new Font(pfc.Families[1], 12, FontStyle.Regular, GraphicsUnit.World));
-            unitSecondaryFont = new XFont(new Font(pfc.Families[1], 7, FontStyle.Regular, GraphicsUnit.World));
+            fontResolver.AddFont(museo100, XFontStyle.Regular, $"{museo100}.otf", true, true);
+            fontResolver.AddFont(museo300, XFontStyle.Regular, $"{museo300}.otf", true, true);
+
+            normalFont = new XFont(museo300, 11, XFontStyle.Regular);
+            quoteFont = new XFont(museo100, 11, XFontStyle.Regular);
+            boldFont = new XFont(museo300, 11, XFontStyle.Bold);
+            boldBiggerFont = new XFont(museo300, 12, XFontStyle.Bold);
+            titleFont = new XFont(museo300, 16, XFontStyle.Bold);
+            unitNameFont = new XFont(museo300, 12, XFontStyle.Regular);
+            unitSecondaryFont = new XFont(museo300, 7, XFontStyle.Regular);
         }
 
         public string CreateSampleOrder()
@@ -121,7 +127,7 @@ namespace Rozkaz.Services
                     {
                         new OrderSubcategory("Utworzenia zastępu", new List<SubcategoryElement>()
                         {
-                            new SubcategoryElement("Na wniosek Rady Drużyny powołuję zastęp „Sępów” w składzie:\n… – zastępowa \n… ")
+                            new SubcategoryElement("Na wniosek Rady Drużyny powołuję zastęp „Sępów” w składzie:\n… – zastępowa")
                         }),
                         new OrderSubcategory("Rozwiązanie zastępu", new List<SubcategoryElement>()
                         {
@@ -158,7 +164,7 @@ namespace Rozkaz.Services
 
             //DrawText("L.dz. 15/2019");
 
-            DrawSpecialSingleLineString($"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}", titleFont, XStringFormats.TopCenter);
+            DrawSpecialSingleLineString(OrderString, titleFont, XStringFormats.TopCenter);
 
             Space(2);
             if (!string.IsNullOrEmpty(model.OccassionalIntro))
@@ -217,8 +223,8 @@ namespace Rozkaz.Services
             this.model = model;
 
             document = new PdfDocument();
-            document.Info.Title = $"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}";
-            document.Info.Subject = $"Rozkaz L. {Info.OrderNumber}/{Info.Date.Year}";
+            document.Info.Title = OrderString;
+            document.Info.Subject = OrderString;
             document.Info.Author = Info.Author;
             document.Info.Creator = "Rozkaz! © 2019 norberto5.pl Norbert Piątkowski";
 

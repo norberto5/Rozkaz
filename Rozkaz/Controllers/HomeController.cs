@@ -7,11 +7,13 @@ namespace Rozkaz.Controllers
 {
 	public class HomeController : Controller
 	{
+        private OrderPdfService orderPdfService => _orderPdfService ?? (_orderPdfService = new OrderPdfService());
+        private OrderPdfService _orderPdfService;
+
         public IActionResult Index() => View();
 
         public FileContentResult SampleOrder()
         {
-            var orderPdfService = new OrderPdfService();
             string orderName = orderPdfService.CreateSampleOrder();
 
             byte[] bytes = System.IO.File.ReadAllBytes(orderName);
