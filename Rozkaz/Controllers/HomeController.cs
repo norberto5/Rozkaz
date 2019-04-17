@@ -7,8 +7,8 @@ namespace Rozkaz.Controllers
 {
 	public class HomeController : Controller
 	{
-        private OrderPdfService orderPdfService => _orderPdfService ?? (_orderPdfService = new OrderPdfService());
-        private OrderPdfService _orderPdfService;
+        private static OrderPdfService orderPdfService => _orderPdfService ?? (_orderPdfService = new OrderPdfService());
+        private static OrderPdfService _orderPdfService;
 
         public IActionResult Index() => View();
 
