@@ -23,7 +23,6 @@ namespace Rozkaz.Controllers
 
         public FileContentResult GenerateDemoOrder(OrderModel model)
         {
-            var orderPdfService = new OrderPdfService();
             string orderName = orderPdfService.CreateOrder(model);
 
             byte[] bytes = System.IO.File.ReadAllBytes(orderName);
