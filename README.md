@@ -1,3 +1,5 @@
+[![Build status](https://dev.azure.com/norberto5/rozkaz/_apis/build/status/rozkaz%20-%20CI)](https://dev.azure.com/norberto5/rozkaz/_build/latest?definitionId=1)
+
 [PL]
 Rozkaz! ⚜
 
