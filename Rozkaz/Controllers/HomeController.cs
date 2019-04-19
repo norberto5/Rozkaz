@@ -5,8 +5,8 @@ using Rozkaz.Models;
 
 namespace Rozkaz.Controllers
 {
-	public class HomeController : Controller
-	{
+    public class HomeController : Controller
+    {
         private static OrderPdfService orderPdfService => _orderPdfService ?? (_orderPdfService = new OrderPdfService());
         private static OrderPdfService _orderPdfService;
 
@@ -34,9 +34,9 @@ namespace Rozkaz.Controllers
 
         public IActionResult Contact() => View();
 
-		public IActionResult Privacy() => View();
+        public IActionResult Privacy() => View();
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-	}
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
 }

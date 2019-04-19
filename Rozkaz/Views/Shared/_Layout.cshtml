@@ -29,9 +29,12 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Rozkaz!</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-left">
                     <li><a asp-area="" asp-controller="Home" asp-action="About">O projekcie</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Kontakt</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a asp-area="" asp-controller="User" asp-action="Index"><b>Konto użytkownika</b></a></li>
                 </ul>
             </div>
         </div>
