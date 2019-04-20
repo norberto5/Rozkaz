@@ -7,6 +7,6 @@ namespace Rozkaz.Controllers
     [Authorize]
     public class UserController : Controller
     {
-        public ActionResult Index => View();
+        public IActionResult Index() => View();
     }
 }
