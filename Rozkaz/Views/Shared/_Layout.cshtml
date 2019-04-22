@@ -34,7 +34,17 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Kontakt</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a asp-area="" asp-controller="User" asp-action="Index"><b>Konto użytkownika</b></a></li>
+                    @using Microsoft.Identity.Web
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="navbar-text">Witaj @User.GetDisplayName()!</li>
+                        <li><a asp-area="" asp-controller="User" asp-action="Logout">Wyloguj się</a></li>
+                        <li><a asp-area="" asp-controller="User" asp-action="Index"><b>Konto użytkownika</b></a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-area="" asp-controller="User" asp-action="Login"><b>Zaloguj się</b></a></li>
+                    }
                 </ul>
             </div>
         </div>
