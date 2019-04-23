@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Local": {
+    "Debug": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

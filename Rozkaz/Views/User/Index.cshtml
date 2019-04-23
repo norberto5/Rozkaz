@@ -1,8 +1,39 @@
-﻿
+﻿@using Newtonsoft.Json.Linq
 @{
     ViewData["Title"] = "Użytkownik";
 }
 
 <h2>Zalogowany użytkownik</h2>
 
-<a asp-area="" asp-controller="User" asp-action="Logout">Wyloguj się</a>
+<table class="table table-striped table-condensed" style="font-family: monospace">
+    <tr>
+        <th>Właściwość</th>
+        <th>Wartość</th>
+    </tr>
+    <tr>
+        <td>Zdjęcie</td>
+        <td>
+            @{
+                if (ViewData["photo"] != null)
+                {
+                    <img style="margin: 5px 0; width: 150px" src="data:image/jpeg;base64, @ViewData["photo"]" />
+                }
+                else
+                {
+                    <h4>Brak zdjęcia</h4>
+                }
+            }
+        </td>
+    </tr>
+    @{
+        var me = ViewData["me"] as JObject;
+        var children = me.Properties();
+        foreach (var child in children)
+        {
+            <tr>
+                <td>@child.Name</td>
+                <td>@child.Value</td>
+            </tr>
+        }
+    }
+</table>

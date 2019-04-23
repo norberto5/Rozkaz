@@ -1,15 +1,40 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Client;
+using System.Threading.Tasks;
 using System.Web;
+using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
+using WebApp_OpenIDConnect_DotNet.Infrastructure;
 
 namespace Rozkaz.Controllers
 {
     public class UserController : Controller
     {
+        private ITokenAcquisition tokenAcquisition;
+        private readonly IGraphApiOperations graphApiOperations;
+
+        public UserController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations)
+        {
+            this.tokenAcquisition = tokenAcquisition;
+            this.graphApiOperations = graphApiOperations;
+        }
+
         public IActionResult Login() => new LocalRedirectResult("/AzureAD/Account/SignIn");
 
         [Authorize]
-        public IActionResult Index() => View();
+        [MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
+        public async Task<IActionResult> Index()
+        {
+            string accessToken = await tokenAcquisition.GetAccessTokenOnBehalfOfUser(HttpContext, new[] { Constants.ScopeUserRead });
+
+            dynamic me = await graphApiOperations.GetUserInformation(accessToken);
+            string photo = await graphApiOperations.GetPhotoAsBase64Async(accessToken);
+
+            ViewData["Me"] = me;
+            ViewData["Photo"] = photo;
+
+            return View();
+        }
 
         [Authorize]
         public IActionResult Logout()
