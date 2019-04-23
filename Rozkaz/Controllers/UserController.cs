@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using System.Web;
 using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
+using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
 
 namespace Rozkaz.Controllers
 {
     public class UserController : Controller
     {
-        private ITokenAcquisition tokenAcquisition;
+        private readonly ITokenAcquisition tokenAcquisition;
         private readonly IGraphApiOperations graphApiOperations;
 
         public UserController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations)
@@ -32,6 +34,8 @@ namespace Rozkaz.Controllers
 
             ViewData["Me"] = me;
             ViewData["Photo"] = photo;
+
+            HttpContext.Session.SetString("Name", (me as JObject).Property("givenName").Value.ToString());
 
             return View();
         }

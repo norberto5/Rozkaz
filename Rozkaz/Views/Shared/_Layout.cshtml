@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -34,10 +35,9 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Kontakt</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    @using Microsoft.Identity.Web
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li class="navbar-text">Witaj @User.GetDisplayName()!</li>
+                    <li class="navbar-text">Witaj @Context.Session.GetString("Name")!</li>
                         <li><a asp-area="" asp-controller="User" asp-action="Logout">Wyloguj się</a></li>
                         <li><a asp-area="" asp-controller="User" asp-action="Index"><b>Konto użytkownika</b></a></li>
                     }
