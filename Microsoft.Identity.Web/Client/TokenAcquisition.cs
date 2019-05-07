@@ -272,7 +272,7 @@ namespace Microsoft.Identity.Web.Client
         private IConfidentialClientApplication BuildConfidentialClientApplication(HttpContext httpContext, ClaimsPrincipal claimsPrincipal)
         {
             var request = httpContext.Request;
-            string currentUri = UriHelper.BuildAbsolute(request.Scheme, request.Host, request.PathBase, azureAdOptions.CallbackPath ?? string.Empty);
+            string currentUri = UriHelper.BuildAbsolute("https", request.Host, request.PathBase, azureAdOptions.CallbackPath ?? string.Empty);
             string authority = $"{azureAdOptions.Instance}{azureAdOptions.TenantId}/";
 
             var app = ConfidentialClientApplicationBuilder.CreateWithApplicationOptions(_applicationOptions)
