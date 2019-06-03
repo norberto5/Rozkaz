@@ -14,13 +14,13 @@ namespace Rozkaz.Utils
         public static T Get<T>(this ISession session, string key)
         {
             string value = session.GetString(key);
-            return value == null ? default : JsonConvert.DeserializeObject<T>(value);
+            return value == null ? default(T) : JsonConvert.DeserializeObject<T>(value);
         }
 
         public static User GetUser(this ISession session)
         {
             string value = session.GetString("User");
-            return value == null ? default : JsonConvert.DeserializeObject<User>(value);
+            return value == null ? default(User) : JsonConvert.DeserializeObject<User>(value);
         }
     }
 }
