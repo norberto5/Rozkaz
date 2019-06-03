@@ -7,6 +7,8 @@ using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
+using Rozkaz.Models;
+using Rozkaz.Utils;
 
 namespace Rozkaz.Controllers
 {
@@ -15,10 +17,13 @@ namespace Rozkaz.Controllers
         private readonly ITokenAcquisition tokenAcquisition;
         private readonly IGraphApiOperations graphApiOperations;
 
-        public UserController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations)
+        private readonly RozkazDatabaseContext db;
+
+        public UserController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations, RozkazDatabaseContext rozkazDatabaseContext)
         {
             this.tokenAcquisition = tokenAcquisition;
             this.graphApiOperations = graphApiOperations;
+            db = rozkazDatabaseContext;
         }
 
         public IActionResult Login() => new LocalRedirectResult("/AzureAD/Account/SignIn");
@@ -29,21 +34,26 @@ namespace Rozkaz.Controllers
         {
             string accessToken = await tokenAcquisition.GetAccessTokenOnBehalfOfUser(HttpContext, new[] { Constants.ScopeUserRead });
 
-            dynamic me = await graphApiOperations.GetUserInformation(accessToken);
-            string photo = await graphApiOperations.GetPhotoAsBase64Async(accessToken);
+            var userInformation = await graphApiOperations.GetUserInformation(accessToken) as JObject;
 
-            ViewData["Me"] = me;
-            ViewData["Photo"] = photo;
+            User user = db.Users.Find(userInformation.Property("id").Value.ToString());
 
-            HttpContext.Session.SetString("Name", (me as JObject).Property("givenName").Value.ToString());
+            if (user == null)
+            {
+                db.Add(userInformation.ToObject<User>());
+                db.SaveChanges();
+            }
 
-            return View();
+            HttpContext.Session.SetString("Name", user.Name);
+            HttpContext.Session.Set("User", user);
+
+            return View(user);
         }
 
         [Authorize]
         public IActionResult Logout()
         {
-            string redirectPage = Url.Action(nameof(LoggedOut), "User", null, Url.ActionContext.HttpContext.Request.Scheme);
+            string redirectPage = Url.Action(nameof(LoggedOut), "User", null, HttpContext.Request.Scheme);
             return new RedirectResult("https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=" + HttpUtility.UrlEncode(redirectPage));
         }
 

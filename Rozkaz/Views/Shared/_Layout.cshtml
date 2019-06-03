@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@using Rozkaz.Utils
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,7 +38,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                    <li class="navbar-text">Witaj @Context.Session.GetString("Name")!</li>
+                    <li class="navbar-text">Witaj @Context.Session.GetUser()?.Name!</li>
                         <li><a asp-area="" asp-controller="User" asp-action="Logout">Wyloguj się</a></li>
                         <li><a asp-area="" asp-controller="User" asp-action="Index"><b>Konto użytkownika</b></a></li>
                     }
