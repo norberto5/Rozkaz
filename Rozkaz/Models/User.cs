@@ -12,5 +12,7 @@ namespace Rozkaz.Models
         public string DisplayName { get; set; }
 
         public string Mail { get; set; }
+
+        public UnitModel Unit { get; set; }
     }
 }

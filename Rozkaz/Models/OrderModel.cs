@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Rozkaz.Models
 {
@@ -29,10 +30,13 @@ namespace Rozkaz.Models
 
     public class UnitModel
     {
+        [Key]
+        public Guid Uid { get; set; }
+
         public string NameFirstLine { get; set; }
 
         public string NameSecondLine { get; set; }
 
-        public List<string> SubtextLines { get; set; } = new List<string>();
+        public string[] SubtextLines { get; set; }
     }
 }

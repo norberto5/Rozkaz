@@ -79,7 +79,7 @@ namespace Rozkaz.Services
                     {
                         NameFirstLine = "22. Drużyna Harcerska",
                         NameSecondLine = "\"Błękitna\"",
-                        SubtextLines = new List<string>()
+                        SubtextLines = new string[3]
                         {
                             "Chorągiew Zachodniopomorska ZHP",
                             "Hufiec Szczecin",
@@ -265,7 +265,7 @@ namespace Rozkaz.Services
 
             y = pageTopMargin + unitRectangleSize.Height + unitMargin;
 
-            foreach(string subline in Info.Unit?.SubtextLines ?? new List<string>())
+            foreach(string subline in Info.Unit?.SubtextLines ?? new string[0])
             {
                 DrawSpecialSingleLineString(subline, unitSecondaryFont, XStringFormats.TopLeft, new XRect(x, y, width, unitSecondaryFont.Height));
                 y += unitSecondaryFont.Height;

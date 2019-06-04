@@ -7,18 +7,19 @@
 <h3>Zalogowany użytkownik: @Model.DisplayName</h3>
 <h4>(@Model.Mail)</h4>
 
-@{
-    @*if (ViewData["photo"] != null)
+<p>Nazwa jednostki:</p>
+1 linia: <input type="text" disabled value="@Model.Unit?.NameFirstLine"/><br/>
+2 linia: <input type="text" disabled value="@Model.Unit?.NameSecondLine"/>
+
+@{  @*if (ViewData["photo"] != null)
     {
         <img style="margin: 5px 0; width: 150px" src="data:image/jpeg;base64, @ViewData["photo"]" />
     }
     else
     {
         <h4>Brak zdjęcia</h4>
-    }*@
-}
-
-@*<table class="table table-striped table-condensed" style="font-family: monospace">
+    }*@   }
+       @*<table class="table table-striped table-condensed" style="font-family: monospace">
     <tr>
         <th>Właściwość</th>
         <th>Wartość</th>
