@@ -22,7 +22,7 @@ namespace Rozkaz.Services
 
         private double RealPageWidth => page.Width - pageLeftRightMargin * 2;
 
-        private string OrderString => $"Rozkaz L. {Info?.OrderNumber}/{Info?.Date.Year}";
+        private string OrderString => $"{(Info?.OrderType == OrderType.Special ? "Rozkaz Specjalny LS." : "Rozkaz L.")} {Info?.OrderNumber}/{Info?.Date.Year}";
 
         private OrderModel model;
         private OrderInfoModel Info => model?.Info;
@@ -71,7 +71,7 @@ namespace Rozkaz.Services
             {
                 Info = new OrderInfoModel()
                 {
-                    Author = "Norbert Piątkowski",
+                    Author = "HO Norbert Piątkowski",
                     City = "Szczecin",
                     Date = DateTime.Now,
                     OrderNumber = 1,
@@ -162,8 +162,6 @@ namespace Rozkaz.Services
 
             Header();
             Footer();
-
-            //DrawText("L.dz. 15/2019");
 
             DrawSpecialSingleLineString(OrderString, titleFont, XStringFormats.TopCenter);
 

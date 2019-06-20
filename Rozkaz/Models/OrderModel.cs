@@ -6,6 +6,11 @@ namespace Rozkaz.Models
 {
     public class OrderModel
     {
+        [Key]
+        public Guid Uid { get; set; }
+
+        public User Owner { get; set; }
+
         public OrderInfoModel Info { get; set; } = new OrderInfoModel();
 
         public string OccassionalIntro { get; set; }
@@ -19,6 +24,8 @@ namespace Rozkaz.Models
     {
         public uint OrderNumber { get; set; }
 
+        public OrderType OrderType { get; set; }
+
         public string Author { get; set; }
 
         public UnitModel Unit { get; set; } = new UnitModel();
@@ -26,6 +33,13 @@ namespace Rozkaz.Models
         public string City { get; set; }
 
         public DateTime Date { get; set; }
+    }
+
+    public enum OrderType
+    {
+        Unknown,
+        Normal,
+        Special
     }
 
     public class UnitModel
