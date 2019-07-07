@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace Rozkaz.Models
 {
-    public class User
+    public class User : IComparable, IEquatable<User>
     {
         public string Id { get; set; }
 
@@ -14,5 +15,10 @@ namespace Rozkaz.Models
         public string Mail { get; set; }
 
         public UnitModel Unit { get; set; }
+
+
+        public int CompareTo(object obj) => Id.CompareTo(obj);
+
+        public bool Equals(User other) => Id == other.Id;
     }
 }
