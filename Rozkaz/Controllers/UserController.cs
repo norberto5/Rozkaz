@@ -26,26 +26,62 @@ namespace Rozkaz.Controllers
             db = rozkazDatabaseContext;
         }
 
+        public static async Task<User> GetUser(HttpContext httpContext, ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations, RozkazDatabaseContext db)
+        {
+            string accessToken = await tokenAcquisition.GetAccessTokenOnBehalfOfUser(httpContext, new[] { Constants.ScopeUserRead });
+
+            var userInformation = await graphApiOperations.GetUserInformation(accessToken) as JObject;
+
+            User user = userInformation.ToObject<User>();
+
+            User dbUser = db.Users.Find(user.Id);
+
+            if (dbUser == null)
+            {
+                db.Users.Add(user);
+                db.SaveChanges();
+            }
+            else
+            {
+                user = dbUser;
+            }
+
+            httpContext.Session.Set("User", user);
+
+            return user;
+        }
+
+
         public IActionResult Login() => new LocalRedirectResult("/AzureAD/Account/SignIn");
 
         [Authorize]
         [MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public async Task<IActionResult> Index()
         {
-            string accessToken = await tokenAcquisition.GetAccessTokenOnBehalfOfUser(HttpContext, new[] { Constants.ScopeUserRead });
+            var user = await GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
 
-            var userInformation = await graphApiOperations.GetUserInformation(accessToken) as JObject;
-
-            User user = db.Users.Find(userInformation.Property("id").Value.ToString());
-
-            if (user == null)
-            {
-                db.Add(userInformation.ToObject<User>());
-                db.SaveChanges();
-            }
-
-            HttpContext.Session.SetString("Name", user.Name);
-            HttpContext.Session.Set("User", user);
+            //db.Orders.Add(
+            //    new OrderEntry()
+            //    {
+            //        Owner = user,
+            //        Order = new OrderModel()
+            //        {
+            //            Info = new OrderInfoModel()
+            //            {
+            //                Author = user.DisplayName,
+            //                City = "Warszawa",
+            //                Date = DateTime.Now,
+            //                OrderNumber = 66,
+            //                OrderType = OrderType.Normal,
+            //                Unit = new UnitModel()
+            //                {
+            //                    NameFirstLine = "Harcerski Klub Ratowniczy",
+            //                    NameSecondLine = "\"Szczecin\""
+            //                }
+            //            }
+            //        }
+            //    });
+            //db.SaveChanges();
 
             return View(user);
         }
