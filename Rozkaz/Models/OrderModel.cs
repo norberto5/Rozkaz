@@ -4,13 +4,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Rozkaz.Models
 {
-    public class OrderModel
+    public class OrderEntry
     {
         [Key]
         public Guid Uid { get; set; }
 
         public User Owner { get; set; }
 
+        public OrderModel Order { get; set; }
+
+    }
+
+    public class OrderModel
+    {
         public OrderInfoModel Info { get; set; } = new OrderInfoModel();
 
         public string OccassionalIntro { get; set; }

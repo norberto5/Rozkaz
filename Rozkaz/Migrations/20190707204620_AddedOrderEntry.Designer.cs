@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Rozkaz.Models;
 
 namespace Rozkaz.Migrations
 {
     [DbContext(typeof(RozkazDatabaseContext))]
-    partial class RozkazDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20190707204620_AddedOrderEntry")]
+    partial class AddedOrderEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +26,7 @@ namespace Rozkaz.Migrations
 
                     b.Property<string>("Order");
 
-                    b.Property<string>("OwnerId");
-
                     b.HasKey("Uid");
-
-                    b.HasIndex("OwnerId");
 
                     b.ToTable("OrderEntry");
                 });
@@ -67,13 +65,6 @@ namespace Rozkaz.Migrations
                     b.HasIndex("UnitUid");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Rozkaz.Models.OrderEntry", b =>
-                {
-                    b.HasOne("Rozkaz.Models.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
                 });
 
             modelBuilder.Entity("Rozkaz.Models.User", b =>

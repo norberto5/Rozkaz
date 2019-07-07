@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 
 namespace Rozkaz.Models
@@ -18,6 +19,12 @@ namespace Rozkaz.Models
             .HasConversion(
                 v => string.Join(';', v),
                 v => v.Split(';', StringSplitOptions.RemoveEmptyEntries));
+
+            modelBuilder.Entity<OrderEntry>()
+            .Property(e => e.Order)
+            .HasConversion(
+                v => JsonConvert.SerializeObject(v),
+                v => JsonConvert.DeserializeObject<OrderModel>(v));
         }
 
         public DbSet<User> Users { get; set; }
