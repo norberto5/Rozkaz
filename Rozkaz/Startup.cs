@@ -33,7 +33,11 @@ namespace Rozkaz
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddSession(options => options.IdleTimeout = TimeSpan.FromHours(24));
+            services.AddSession(options =>
+            {
+                options.Cookie.IsEssential = true;
+                options.IdleTimeout = TimeSpan.FromHours(24);
+            });
 
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<RozkazDatabaseContext>(options => options.UseMySql(Configuration["Database:Connection"]));
