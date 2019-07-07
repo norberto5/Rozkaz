@@ -28,5 +28,7 @@ namespace Rozkaz.Models
         }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<OrderEntry> Orders { get; set; }
     }
 }
