@@ -8,7 +8,7 @@ Rozkaz! ⚜
 Projekt ma jeden prosty cel, tworzenie i przechowywanie rozkazów harcerskich ⚜. Założenia serwisu:
 - jednolity układ rozkazów w większej liczbie jednostek, 
 - jedno miejsce do przechowywania rozkazów dostępne z każdego miejsca na świecie,
-- prostą funkcjonalność, a jednocześnie nowoczesne podejście do problemu korzystając z najnowszych dostępnych technologii,
+- prosta funkcjonalność, a jednocześnie nowoczesne podejście do problemu korzystając z najnowszych dostępnych technologii,
 - otwartość - open source'owy projekt.
 
 Projekt jest tworzony na potrzeby Związku Harcerstwa Polskiego ⚜
