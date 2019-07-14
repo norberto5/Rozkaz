@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Client.TokenCacheProviders;
 using Rozkaz.Models;
+using Rozkaz.Services;
 using System;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
 using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
@@ -47,6 +48,8 @@ namespace Rozkaz
                 .AddInMemoryTokenCaches();
 
             services.AddGraphService(Configuration);
+
+            services.AddSingleton<OrderPdfService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
