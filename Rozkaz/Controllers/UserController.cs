@@ -54,8 +54,7 @@ namespace Rozkaz.Controllers
 
         public IActionResult Login() => new LocalRedirectResult("/AzureAD/Account/SignIn");
 
-        [Authorize]
-        [MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
+        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public async Task<IActionResult> Index()
         {
             var user = await GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
