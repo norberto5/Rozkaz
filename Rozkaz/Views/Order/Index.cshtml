@@ -3,43 +3,26 @@
 }
 <h2>@ViewData["Title"]</h2>
 
-@model List<Rozkaz.Models.OrderModel>
+@model List<Rozkaz.Models.OrderEntry>
+
+<p><a asp-area="" asp-controller="Order" asp-action="Create"><b>Stwórz nowy rozkaz</b></a></p>
 
 <table class="table table-striped table-condensed" style="font-family: monospace">
 @{
-    foreach (var order in Model)
+    foreach (var entry in Model)
     {
-        <tr>
-            <td>Rozkaz L. @order.Info.OrderNumber/@order.Info.Date.Year</td>
-            <td>@order.Info.Author</td>
-            <td>@order.Info.Date.ToShortDateString()</td>
-        </tr>
+        var order = entry.Order;
+    <tr>
+        <td>Rozkaz L. @order.Info.OrderNumber/@order.Info.Date.Year</td>
+        <td>@order.Info.Author</td>
+        <td>@order.Info.City</td>
+        <td>@order.Info.Date.ToShortDateString()</td>
+        <td>
+            <a asp-area="" asp-controller="Order" asp-action="Show" asp-route-id="@entry.Uid"><b>Wyświetl</b></a> |
+            <a asp-area="" asp-controller="Order" asp-action="Edit" asp-route-id="@entry.Uid">Edytuj</a> |
+            Usuń
+        </td>
+    </tr>
     }
-    }
+}
 </table>
-
-
-    @*<h4><a asp-area="" asp-controller="Home" asp-action="SampleOrder">Przykładowy rozkaz</a></h4>
-        <br />
-        <h4>Wygeneruj rozkaz demo</h4>
-        <form id="order_demo" method="post" action="Home/GenerateDemoOrder" enctype="application/x-www-form-urlencoded">
-            <div>
-                <label for="info.orderNumber">Numer rozkazu: </label>
-                <input name="info.orderNumber" type="number" min="0" max="99" value="1" maxlength="2"/>
-            </div>
-            <div>
-                <label for="info.author">Autor: </label>
-                <input name="info.author" type="text" />
-            </div>
-            <div>
-                <label for="info.city">Miejscowość: </label>
-                <input name="info.city" type="text" maxlength="40" value="Szczecin"/>
-            </div>
-            <div>
-                <label for="info.date">Data: </label>
-                <input name="info.date" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
-            </div>
-            <div>
-                <input type="submit" value="Generuj" />
-            </div>
-        </form>*@

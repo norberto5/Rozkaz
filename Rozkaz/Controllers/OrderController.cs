@@ -6,6 +6,9 @@ using Microsoft.Identity.Web.Client;
 using Rozkaz.Models;
 using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
+using System;
+using Rozkaz.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Rozkaz.Controllers
 {
@@ -15,36 +18,47 @@ namespace Rozkaz.Controllers
         private readonly IGraphApiOperations graphApiOperations;
 
         private readonly RozkazDatabaseContext db;
+        private readonly OrderPdfService orderPdfService;
 
-        public OrderController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations, RozkazDatabaseContext rozkazDatabaseContext)
+        public OrderController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations, RozkazDatabaseContext rozkazDatabaseContext, OrderPdfService orderPdfService)
         {
             this.tokenAcquisition = tokenAcquisition;
             this.graphApiOperations = graphApiOperations;
             db = rozkazDatabaseContext;
+            this.orderPdfService = orderPdfService;
         }
 
         // GET: Order
-        [Authorize]
-        [MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
+        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public async Task<IActionResult> Index()
         {
-            var currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
+            User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
 
-            var orders = db.Orders.Where(o => o.Owner == currentUser).Select(o => o.Order).ToList();
+            var orders = db.Orders.Where(o => o.Owner == currentUser).ToList();
             return View(orders);
         }
 
-        //// GET: Order/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    return View();
-        //}
+        // GET: Order/Show/5
+        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
+        public async Task<ActionResult> Show(Guid id)
+        {
+            User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
 
-        //// GET: Order/Create
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
+            OrderEntry order = db.Orders.First(o => o.Uid == id && o.Owner == currentUser);
+
+            string orderName = orderPdfService.CreateOrder(order.Order);
+
+            byte[] bytes = System.IO.File.ReadAllBytes(orderName);
+            System.IO.File.Delete(orderName);
+            return File(bytes, "application/pdf");
+        }
+
+        // GET: Order/Create
+        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
+        public ActionResult Create()
+        {
+            return View();
+        }
 
         //// POST: Order/Create
         //[HttpPost]
@@ -63,28 +77,45 @@ namespace Rozkaz.Controllers
         //    }
         //}
 
-        //// GET: Order/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
+        // GET: Order/Edit/5
+        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
+        public async Task<ActionResult> Edit(Guid id)
+        {
+            User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
 
-        //// POST: Order/Edit/5
-        //[HttpPost]
+            OrderEntry orderEntry = db.Orders.First(o => o.Uid == id && o.Owner == currentUser);
+
+            return View(orderEntry);
+        }
+
+        // POST: Order/Edit/5
+        [HttpPost]
         //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add update logic here
+        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
+        public async Task<ActionResult> Edit(Guid id, OrderModel model)
+        {
+            try
+            {
+                User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
+                OrderEntry orderEntry = db.Orders.Where(o => o.Uid == id && o.Owner == currentUser).Single();
+                OrderModel order = orderEntry.Order;
 
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+                order.Info.OrderNumber = model.Info.OrderNumber;
+                order.Info.Author = model.Info.Author;
+                order.Info.City = model.Info.City;
+                order.Info.Date = model.Info.Date;
+
+                db.Entry(orderEntry).State = EntityState.Modified;
+
+                db.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
         //// GET: Order/Delete/5
         //public ActionResult Delete(int id)
