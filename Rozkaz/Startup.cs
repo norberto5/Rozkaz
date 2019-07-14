@@ -10,6 +10,7 @@ using Microsoft.Identity.Web.Client.TokenCacheProviders;
 using Rozkaz.Models;
 using Rozkaz.Services;
 using System;
+using System.Globalization;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
 using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
 
@@ -70,6 +71,10 @@ namespace Rozkaz
             app.UseCookiePolicy();
 
             app.UseSession();
+
+            var cultureInfo = new CultureInfo("pl-PL");
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
             app.UseMvc(routes =>
             {
