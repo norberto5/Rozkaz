@@ -1,19 +1,38 @@
 ﻿@model Rozkaz.Models.OrderEntry
 @{
     ViewData["Title"] = "Edycja rozkazu";
-    var order = Model.Order;
+    var order = Model?.Order;
 }
 <h2>@ViewData["Title"]</h2>
 
 <p>
+    @if (Model == null)
+    {
+        var statusCode = Context.Response.StatusCode;
+        if (statusCode == 404)
+        {
+            <div class="alert alert-danger" role="alert">Nie znaleziono podanego rozkazu. Być może został usunięty.</div>
+        }
+        else if (statusCode == 403)
+        {
+            <div class="alert alert-danger" role="alert">Nie masz dostępu do tego rozkazu.</div>
+        }
+    }
     <a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Index">
         <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Wróć
     </a>
-    <a class="btn btn-info" role="button" asp-area="" asp-controller="Order" asp-action="Show" asp-route-id="@Model.Uid">
-        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl rozkaz (bez zmian)
-    </a>
+    @if (Model != null)
+    {
+        <a class="btn btn-info" role="button" asp-area="" asp-controller="Order" asp-action="Show" asp-route-id="@Model.Uid">
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl rozkaz (bez zmian)
+        </a>
+    }
 </p>
 
+@if (Model == null)
+{
+    return;
+}
 <form id="order_edit" method="post" action="@Model.Uid" enctype="application/x-www-form-urlencoded">
 
     <div class="form-group">

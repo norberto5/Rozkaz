@@ -9,6 +9,7 @@ using WebApp_OpenIDConnect_DotNet.Infrastructure;
 using System;
 using Rozkaz.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Rozkaz.Controllers
 {
@@ -33,7 +34,6 @@ namespace Rozkaz.Controllers
         public async Task<IActionResult> Index()
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-
             var orders = db.Orders.Where(o => o.Owner == currentUser).ToList();
             return View(orders);
         }
@@ -42,8 +42,12 @@ namespace Rozkaz.Controllers
         public async Task<ActionResult> Show(Guid id)
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
+            OrderEntry order = db.Orders.SingleOrDefault(o => o.Uid == id);
 
-            OrderEntry order = db.Orders.First(o => o.Uid == id && o.Owner == currentUser);
+            if(!IsOrderFoundAndUserHavePermission(order, currentUser))
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             string orderName = orderPdfService.CreateOrder(order.Order);
 
@@ -80,7 +84,12 @@ namespace Rozkaz.Controllers
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
 
-            OrderEntry orderEntry = db.Orders.First(o => o.Uid == id && o.Owner == currentUser);
+            OrderEntry orderEntry = db.Orders.SingleOrDefault(o => o.Uid == id);
+
+            if(!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
+            {
+                return View();
+            }
 
             return View(orderEntry);
         }
@@ -93,15 +102,15 @@ namespace Rozkaz.Controllers
             try
             {
                 User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-                OrderEntry orderEntry = db.Orders.Where(o => o.Uid == id && o.Owner == currentUser).Single();
-                OrderModel order = orderEntry.Order;
+                OrderEntry orderEntry = db.Orders.Where(o => o.Uid == id).SingleOrDefault();
 
-                order.Info.OrderNumber = model.Info.OrderNumber;
-                order.Info.Author = model.Info.Author;
-                order.Info.City = model.Info.City;
-                order.Info.Date = model.Info.Date;
-                order.Info.Unit.NameFirstLine = model.Info.Unit.NameFirstLine;
-                order.Info.Unit.NameSecondLine = model.Info.Unit.NameSecondLine;
+                if (!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
+                {
+                    return View();
+                }
+
+                OrderModel order = orderEntry.Order;
+                order.Info = model.Info;
                 order.OccassionalIntro = model.OccassionalIntro;
                 order.ExceptionsFromAnotherOrder = model.ExceptionsFromAnotherOrder;
 
@@ -139,5 +148,20 @@ namespace Rozkaz.Controllers
         //        return View();
         //    }
         //}
+
+        private bool IsOrderFoundAndUserHavePermission(OrderEntry orderEntry, User currentUser)
+        {
+            if (orderEntry == null)
+            {
+                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return false;
+            }
+            if (orderEntry.Owner != currentUser)
+            {
+                Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                return false;
+            }
+            return true;
+        }
     }
 }
