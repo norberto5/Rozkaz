@@ -6,11 +6,14 @@
 <h2>@ViewData["Title"]</h2>
 
 <p>
-<a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Index">
-    <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Wróć</a>
-<a class="btn btn-info" role="button" asp-area="" asp-controller="Order" asp-action="Show" asp-route-id="@Model.Uid">
-    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl rozkaz (bez zmian)</a>
+    <a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Index">
+        <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Wróć
+    </a>
+    <a class="btn btn-info" role="button" asp-area="" asp-controller="Order" asp-action="Show" asp-route-id="@Model.Uid">
+        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl rozkaz (bez zmian)
+    </a>
 </p>
+
 <form id="order_edit" method="post" action="@Model.Uid" enctype="application/x-www-form-urlencoded">
     <div class="form-group">
         <table class="table table-striped table-condensed" style="font-family: monospace">
@@ -32,7 +35,7 @@
             </tr>
             <tr>
                 <td>1. linia nazwy jednostki:</td>
-                <td><input class="form-control" name="info.unit.nameFirstLine" type="text" value="@order.Info.Unit.NameFirstLine" maxlength="30" required placeholder="np. 36. Drużyna Harcerska" /></td>
+                <td><input class="form-control" name="info.unit.nameFirstLine" type="text" value="@order.Info.Unit.NameFirstLine" maxlength="30" placeholder="np. 36. Drużyna Harcerska" required /></td>
             </tr>
             <tr>
                 <td>2. linia nazwy jednostki:</td>
