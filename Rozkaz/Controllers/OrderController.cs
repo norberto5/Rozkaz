@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Rozkaz.Controllers
 {
+    [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
     public class OrderController : Controller
     {
         private readonly ITokenAcquisition tokenAcquisition;
@@ -29,7 +30,6 @@ namespace Rozkaz.Controllers
         }
 
         // GET: Order
-        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public async Task<IActionResult> Index()
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
@@ -39,7 +39,6 @@ namespace Rozkaz.Controllers
         }
 
         // GET: Order/Show/5
-        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public async Task<ActionResult> Show(Guid id)
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
@@ -54,7 +53,6 @@ namespace Rozkaz.Controllers
         }
 
         // GET: Order/Create
-        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public ActionResult Create()
         {
             return View();
@@ -78,7 +76,6 @@ namespace Rozkaz.Controllers
         //}
 
         // GET: Order/Edit/5
-        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public async Task<ActionResult> Edit(Guid id)
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
@@ -91,7 +88,6 @@ namespace Rozkaz.Controllers
         // POST: Order/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
         public async Task<ActionResult> Edit(Guid id, OrderModel model)
         {
             try
