@@ -100,6 +100,10 @@ namespace Rozkaz.Controllers
                 order.Info.Author = model.Info.Author;
                 order.Info.City = model.Info.City;
                 order.Info.Date = model.Info.Date;
+                order.Info.Unit.NameFirstLine = model.Info.Unit.NameFirstLine;
+                order.Info.Unit.NameSecondLine = model.Info.Unit.NameSecondLine;
+                order.OccassionalIntro = model.OccassionalIntro;
+                order.ExceptionsFromAnotherOrder = model.ExceptionsFromAnotherOrder;
 
                 db.Entry(orderEntry).State = EntityState.Modified;
 
