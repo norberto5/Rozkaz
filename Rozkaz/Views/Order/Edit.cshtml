@@ -15,44 +15,59 @@
 </p>
 
 <form id="order_edit" method="post" action="@Model.Uid" enctype="application/x-www-form-urlencoded">
+
     <div class="form-group">
-        <table class="table table-striped table-condensed" style="font-family: monospace">
-            <tr>
-                <td width="150">Numer rozkazu:</td>
-                <td><input class="form-control" name="info.orderNumber" type="number" min="0" max="99" value="@order.Info.OrderNumber" placeholder="np. 3" required /></td>
-            </tr>
-            <tr>
-                <td>Miejscowość:</td>
-                <td><input class="form-control" name="info.city" type="text" maxlength="30" value="@order.Info.City" placeholder="np. Szczecin" required /></td>
-            </tr>
-            <tr>
-                <td>Data:</td>
-                <td><input class="form-control" name="info.date" type="date" value="@order.Info.Date.ToString("yyyy-MM-dd")" required /></td>
-            </tr>
-            <tr>
-                <td>Autor:</td>
-                <td><input class="form-control" name="info.author" type="text" value="@order.Info.Author" maxlength="50" placeholder="np. phm. Jan Kowalski" required /></td>
-            </tr>
-            <tr>
-                <td>1. linia nazwy jednostki:</td>
-                <td><input class="form-control" name="info.unit.nameFirstLine" type="text" value="@order.Info.Unit.NameFirstLine" maxlength="30" placeholder="np. 36. Drużyna Harcerska" required /></td>
-            </tr>
-            <tr>
-                <td>2. linia nazwy jednostki:</td>
-                <td><input class="form-control" name="info.unit.nameSecondLine" type="text" value="@order.Info.Unit.NameSecondLine" maxlength="30" placeholder='np. "Czarne wilki"' /></td>
-            </tr>
-            <tr>
-                <td>Wstęp okolicznościowy:</td>
-                <td><textarea class="form-control" name="occassionalIntro" rows="5" placeholder="Opcjonalny wstęp okolicznościowy.">@order.OccassionalIntro</textarea></td>
-            </tr>
-            <tr>
-                <td>Wyjątki z rozkazu:</td>
-                <td><textarea class="form-control" name="exceptionsFromAnotherOrder" rows="5" placeholder="Wyjątki z rozkazu wyższego szczebla.">@order.ExceptionsFromAnotherOrder</textarea></td>
-            </tr>
-        </table>
-        @Html.AntiForgeryToken()
-        <div>
-            <button type="submit" class="btn btn-primary center-block"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Zapisz zmiany</button>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span></span>
+                    <span class="input-group-addon">Rozkaz L.</span>
+                    <input class="form-control" name="info.orderNumber" aria-label="Numer rozkazu" type="number" min="0" max="99" value="@order.Info.OrderNumber" placeholder="np. 3" required />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                    <input class="form-control" name="info.author" aria-label="Autor" type="text" value="@order.Info.Author" maxlength="50" placeholder="np. phm. Jan Kowalski" required />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></span>
+                    <input class="form-control" name="info.city" aria-label="Miejscowość" type="text" maxlength="30" value="@order.Info.City" placeholder="np. Szczecin" required />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon" id="date-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></span>
+                    <input class="form-control" name="info.date" aria-label="Data" type="date" value="@order.Info.Date.ToString("yyyy-MM-dd")" required />
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="form-group">
+        <p>Nazwa jednostki:</p>
+        <div class="input-group">
+            <span class="input-group-addon">1.</span>
+            <input class="form-control" name="info.unit.nameFirstLine" aria-label="Nazwa jednostki 1" type="text" value="@order.Info.Unit.NameFirstLine" maxlength="30" placeholder="np. 36. Drużyna Harcerska" required />
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">2.</span>
+            <input class="form-control" name="info.unit.nameSecondLine" aria-label="Nazwa jednostki 2" type="text" value="@order.Info.Unit.NameSecondLine" maxlength="30" placeholder='np. "Czarne wilki"' />
+        </div>
+    </div>
+
+    <div class="form-group">
+        Wstęp okolicznościowy:
+        <textarea class="form-control" name="occassionalIntro" rows="5" placeholder="Opcjonalny wstęp okolicznościowy.">@order.OccassionalIntro</textarea>
+        Wyjątki z rozkazu:
+        <textarea class="form-control" name="exceptionsFromAnotherOrder" rows="5" placeholder="Wyjątki z rozkazu wyższego szczebla.">@order.ExceptionsFromAnotherOrder</textarea>
+    </div>
+
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-primary center-block"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Zapisz zmiany</button>
 </form>
