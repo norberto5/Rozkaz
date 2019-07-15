@@ -87,7 +87,7 @@ namespace Rozkaz.Controllers
 
         // POST: Order/Edit/5
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Guid id, OrderModel model)
         {
             try

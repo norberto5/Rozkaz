@@ -19,7 +19,7 @@
         <table class="table table-striped table-condensed" style="font-family: monospace">
             <tr>
                 <td width="150">Numer rozkazu:</td>
-                <td><input class="form-control" name="info.orderNumber" type="number" min="0" max="99" value="@order.Info.OrderNumber" placeholder="np. 3"  required /></td>
+                <td><input class="form-control" name="info.orderNumber" type="number" min="0" max="99" value="@order.Info.OrderNumber" placeholder="np. 3" required /></td>
             </tr>
             <tr>
                 <td>Miejscowość:</td>
@@ -50,6 +50,7 @@
                 <td><textarea class="form-control" name="exceptionsFromAnotherOrder" rows="5" placeholder="Wyjątki z rozkazu wyższego szczebla.">@order.ExceptionsFromAnotherOrder</textarea></td>
             </tr>
         </table>
+        @Html.AntiForgeryToken()
         <div>
             <button type="submit" class="btn btn-primary center-block"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Zapisz zmiany</button>
         </div>
