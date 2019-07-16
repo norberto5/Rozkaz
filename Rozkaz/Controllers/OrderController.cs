@@ -117,9 +117,9 @@ namespace Rozkaz.Controllers
                 }
 
                 OrderModel order = orderEntry.Order;
-                order.Info = model.Info;
-                order.OccassionalIntro = model.OccassionalIntro;
-                order.ExceptionsFromAnotherOrder = model.ExceptionsFromAnotherOrder;
+                order.Info = model?.Info;
+                order.OccassionalIntro = model?.OccassionalIntro;
+                order.ExceptionsFromAnotherOrder = model?.ExceptionsFromAnotherOrder;
 
                 db.Entry(orderEntry).State = EntityState.Modified;
 
