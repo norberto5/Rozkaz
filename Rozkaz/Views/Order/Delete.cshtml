@@ -1,0 +1,81 @@
+﻿@model Rozkaz.Models.OrderEntry
+@{
+    ViewData["Title"] = "Usuwanie rozkazu";
+    var order = Model?.Order;
+}
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    @if (Model == null)
+    {
+        <a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Index">
+            <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Wróć
+        </a>
+        var statusCode = Context.Response.StatusCode;
+        if (statusCode == 404)
+        {
+            <div class="alert alert-danger" role="alert">Nie znaleziono podanego rozkazu. Być może został już usunięty.</div>
+        }
+        else if (statusCode == 403)
+        {
+            <div class="alert alert-danger" role="alert">Nie masz dostępu do tego rozkazu.</div>
+        }
+    }
+</p>
+
+@if (Model == null)
+{
+    return;
+}
+<div class="panel panel-danger">
+    <div class="panel-heading"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Czy na pewno chcesz usunąć rozkaz?</div>
+    <div class="panel-body">
+        Rozkaz, który chcesz usunąć:
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span></span>
+                    <span class="input-group-addon">Rozkaz L.</span>
+                    <input class="form-control" name="info.orderNumber" aria-label="Numer rozkazu" type="number" value="@order.Info.OrderNumber" readonly />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                    <input class="form-control" name="info.author" aria-label="Autor" type="text" value="@order.Info.Author" readonly />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></span>
+                    <input class="form-control" name="info.city" aria-label="Miejscowość" type="text" value="@order.Info.City" readonly />
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <span class="input-group-addon" id="date-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></span>
+                    <input class="form-control" name="info.date" aria-label="Data" type="date" value="@order.Info.Date.ToString("yyyy-MM-dd")" readonly />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 text-right">
+                <a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Index">
+                <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Wróć
+                </a>
+            </div>
+            <div class="col-md-6 text-left">
+                <form id="order_delete" method="post" action="@Model.Uid" enctype="application/x-www-form-urlencoded">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Usuń</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
