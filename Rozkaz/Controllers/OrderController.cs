@@ -103,8 +103,7 @@ namespace Rozkaz.Controllers
         }
 
         // POST: Order/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Guid id, OrderModel model)
         {
             try
@@ -149,8 +148,7 @@ namespace Rozkaz.Controllers
         }
 
         // POST: Order/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(Guid id, IFormCollection formCollection)
         {
             try
