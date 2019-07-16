@@ -63,22 +63,29 @@ namespace Rozkaz.Controllers
             return View();
         }
 
-        //// POST: Order/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add insert logic here
+        // POST: Order/Create
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(OrderModel model)
+        {
+            try
+            {
+                User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
 
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+                db.Orders.Add(
+                    new OrderEntry()
+                    {
+                        Order = model,
+                        Owner = currentUser
+                    });
+                db.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
         // GET: Order/Edit/5
         public async Task<ActionResult> Edit(Guid id)
