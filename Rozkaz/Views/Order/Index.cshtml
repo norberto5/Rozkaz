@@ -9,8 +9,31 @@
     @{
         foreach (var entry in Model)
         {
+            var isDeleted = entry.Deleted;
             var order = entry.Order;
-            <tr>
+        <tr>
+            @if (isDeleted)
+            {
+                <td><s>Rozkaz L. @order.Info.OrderNumber/@order.Info.Date.Year</s></td>
+                <td><s>@order.Info.Author</s></td>
+                <td><s>@order.Info.City</s></td>
+                <td><s>@order.Info.Date.ToShortDateString()</s></td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Opcje dla rozkazu">
+                        <a class="btn btn-info disabled" role="button">
+                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl
+                        </a>
+                        <a class="btn btn-warning disabled" role="button">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edytuj
+                        </a>
+                        <a class="btn btn-danger disabled" role="button">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Usuń
+                        </a>
+                    </div>
+                </td>
+            }
+            else
+            {
                 <td>Rozkaz L. @order.Info.OrderNumber/@order.Info.Date.Year</td>
                 <td>@order.Info.Author</td>
                 <td>@order.Info.City</td>
@@ -18,14 +41,18 @@
                 <td>
                     <div class="btn-group" role="group" aria-label="Opcje dla rozkazu">
                         <a class="btn btn-info" role="button" asp-area="" asp-controller="Order" asp-action="Show" asp-route-id="@entry.Uid">
-                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl</a>
+                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl
+                        </a>
                         <a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Edit" asp-route-id="@entry.Uid">
-                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edytuj</a>
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edytuj
+                        </a>
                         <a class="btn btn-danger" role="button" asp-area="" asp-controller="Order" asp-action="Delete" asp-route-id="@entry.Uid">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Usuń</a>
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Usuń
+                        </a>
                     </div>
                 </td>
-            </tr>
+            }
+        </tr>
         }
     }
 </table>

@@ -35,7 +35,7 @@ namespace Rozkaz.Controllers
         public async Task<IActionResult> Index()
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-            var orders = db.Orders.Where(o => o.Owner == currentUser).ToList();
+            var orders = db.Orders.Where(o => o.Owner == currentUser).OrderBy(o => o.CreatedTime).ToList();
             return View(orders);
         }
 
@@ -43,14 +43,14 @@ namespace Rozkaz.Controllers
         public async Task<ActionResult> Show(Guid id)
         {
             User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-            OrderEntry order = db.Orders.SingleOrDefault(o => o.Uid == id);
+            OrderEntry orderEntry = db.Orders.SingleOrDefault(o => o.Uid == id);
 
-            if(!IsOrderFoundAndUserHavePermission(order, currentUser))
+            if(!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            string orderName = orderPdfService.CreateOrder(order.Order);
+            string orderName = orderPdfService.CreateOrder(orderEntry.Order);
 
             byte[] bytes = System.IO.File.ReadAllBytes(orderName);
             System.IO.File.Delete(orderName);
@@ -75,7 +75,9 @@ namespace Rozkaz.Controllers
                     new OrderEntry()
                     {
                         Order = model,
-                        Owner = currentUser
+                        Owner = currentUser,
+                        CreatedTime = DateTime.Now,
+                        LastModifiedTime = DateTime.Now
                     });
                 db.SaveChanges();
 
@@ -116,13 +118,14 @@ namespace Rozkaz.Controllers
                     return View();
                 }
 
+                orderEntry.LastModifiedTime = DateTime.Now;
+
                 OrderModel order = orderEntry.Order;
                 order.Info = model?.Info;
                 order.OccassionalIntro = model?.OccassionalIntro;
                 order.ExceptionsFromAnotherOrder = model?.ExceptionsFromAnotherOrder;
 
                 db.Entry(orderEntry).State = EntityState.Modified;
-
                 db.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
@@ -161,7 +164,10 @@ namespace Rozkaz.Controllers
                     return View();
                 }
 
-                db.Orders.Remove(orderEntry);
+                orderEntry.LastModifiedTime = DateTime.Now;
+                orderEntry.Deleted = true;
+
+                db.Entry(orderEntry).State = EntityState.Modified;
                 db.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
@@ -174,7 +180,7 @@ namespace Rozkaz.Controllers
 
         private bool IsOrderFoundAndUserHavePermission(OrderEntry orderEntry, User currentUser)
         {
-            if (orderEntry == null)
+            if (orderEntry == null || orderEntry.Deleted)
             {
                 Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return false;

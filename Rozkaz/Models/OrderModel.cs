@@ -13,6 +13,11 @@ namespace Rozkaz.Models
 
         public OrderModel Order { get; set; }
 
+        public DateTime CreatedTime { get; set; }
+
+        public DateTime LastModifiedTime { get; set; }
+
+        public bool Deleted { get; set; }
     }
 
     public class OrderModel
