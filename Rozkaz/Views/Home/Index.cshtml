@@ -1,29 +1,17 @@
 ﻿@{
     ViewData["Title"] = "Strona główna";
 }
-    <h2>@ViewData["Title"]</h2>
+<h2>@ViewData["Title"]</h2>
 
-    <h4><a asp-area="" asp-controller="Home" asp-action="SampleOrder">Przykładowy rozkaz</a></h4>
-<br />
-<h4>Wygeneruj rozkaz demo</h4>
-<form id="order_demo" method="post" action="Home/GenerateDemoOrder" enctype="application/x-www-form-urlencoded">
-    <div>
-        <label for="info.orderNumber">Numer rozkazu: </label>
-        <input name="info.orderNumber" type="number" min="0" max="99" value="1" maxlength="2"/>
+<p>
+    <a role="button" class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="SampleOrder"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Wyświetl przykładowy rozkaz</a>
+</p>
+
+<div class="panel panel-warning">
+    <div class="panel-heading">
+        <h3 class="panel-title"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span> Zaloguj się!</h3>
     </div>
-    <div>
-        <label for="info.author">Autor: </label>
-        <input name="info.author" type="text" />
+    <div class="panel-body">
+        Opcje są dostępne po <a asp-area="" asp-controller="User" asp-action="Login">zalogowaniu się</a> poprzez konto Microsoft Office 365 Związku Harcerstwa Polskiego, które jest darmowe dla każdego członka Związku.
     </div>
-    <div>
-        <label for="info.city">Miejscowość: </label>
-        <input name="info.city" type="text" maxlength="40" value="Szczecin"/>
-    </div>
-    <div>
-        <label for="info.date">Data: </label>
-        <input name="info.date" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
-    </div>
-    <div>
-        <input type="submit" value="Generuj" />
-    </div>
-</form>
+</div>

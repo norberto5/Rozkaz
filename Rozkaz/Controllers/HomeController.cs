@@ -15,7 +15,15 @@ namespace Rozkaz.Controllers
             this.orderPdfService = orderPdfService;
         }
 
-        public IActionResult Index() => View();
+        public IActionResult Index()
+        {
+            if(User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(nameof(OrderController.Index), "Order");
+            }
+
+            return View();
+        }
 
         public FileContentResult SampleOrder()
         {

@@ -1,5 +1,4 @@
 ﻿@model Rozkaz.Models.User
-
 @{ 
     ViewData["Title"] = "Użytkownik";
 }
@@ -7,9 +6,9 @@
 <h3>Zalogowany użytkownik: @Model.DisplayName</h3>
 <h4>(@Model.Mail)</h4>
 
-<p>Nazwa jednostki:</p>
+@*<p>Nazwa jednostki:</p>
 1 linia: <input type="text" disabled value="@Model.Unit?.NameFirstLine"/><br/>
-2 linia: <input type="text" disabled value="@Model.Unit?.NameSecondLine"/>
+2 linia: <input type="text" disabled value="@Model.Unit?.NameSecondLine"/>*@
 
 @{  @*if (ViewData["photo"] != null)
     {
