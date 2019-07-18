@@ -91,6 +91,85 @@
         </p>
     </div>
 
+    <div class="form-group">
+        @*<div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Poniższa część jest w trakcie tworzenia i nie działa.</div>*@
+
+
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Poniższa część jest w trakcie tworzenia i nie działa tak jak należy. Zmiany z tego panelu się nie zapiszą.</h3>
+            </div>
+            <div class="panel-body">
+
+        <h4>Punkty rozkazu:</h4>
+        <h5><b>2. Drużyna</b></h5>
+        <b>2.1. Mianowania funkcyjnych</b>
+
+        <!-- single item -->
+        <div class="input-group">
+            <span class="input-group-addon">Na wniosek </span>
+            <input type="text" class="form-control text-center" placeholder="np. Rady Drużyny" />
+            @*<div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Rady Drużyny</a></li>
+                    <li><a href="#">Kręgu Rady</a></li>
+                    <li><a href="#">Zastępu Zastępowych</a></li>
+                </ul>
+            </div>*@
+
+            <span class="input-group-addon">mianuję</span>
+            <input type="text" class="form-control" placeholder="np. ćw. Jana Kowalskiego" />
+            <span class="input-group-addon">na funkcję </span>
+            <input type="text" class="form-control" placeholder="np. przybocznego" />
+            <span class="input-group-addon">z dniem </span>
+            <input type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-danger" aria-label="Usuń punkt">
+                    <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                </button>
+            </span>
+        </div>
+
+        <!-- add new item -->
+        <p>
+            <div class="input-group">
+                <div class="input-group-btn dropup">
+                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Dodaj nowy punkt
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="text-center"><b>1. Zarządzenia i informacje</b></li>
+                        <li><a href="#">1.1. Zarządzenia</a></li>
+                        <li><a href="#">1.2. Informacje</a></li>
+                        <li role="separator" class="divider"></li>
+
+                        <li class="text-center"><b>2. Drużyna</b></li>
+                        <li><a href="#">2.1. Mianowania funkcyjnych</a></li>
+                        <li><a href="#">2.2. Zwolnienia funkcyjnych</a></li>
+                        <li><a href="#">2.3. Powołania do rady drużyny</a></li>
+                        <li><a href="#">2.4. Zwoleniania z rady drużyny</a></li>
+                        <li role="separator" class="divider"></li>
+
+                        <li class="text-center"><b>3. Zastępy</b></li>
+                        <li><a href="#">3.1. Utworzenia zastępu</a></li>
+                        <li><a href="#">3.2. Rozwiązanie zastępu</a></li>
+                        <li><a href="#">3.3. Zmiana składu zastępów</a></li>
+                        <li role="separator" class="divider"></li>
+
+                        <li class="text-center"><b>4. Instrumenty metodyczne</b></li>
+                        <li role="separator" class="divider"></li>
+                    </ul>
+                </div>
+            </div>
+        </p>
+    </div>
+            </div>
+        </div>
+
+
     @Html.AntiForgeryToken()
     <button type="submit" class="btn btn-primary center-block"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Zapisz zmiany</button>
 </form>
