@@ -81,10 +81,14 @@
     </div>
 
     <div class="form-group">
-        Wstęp okolicznościowy:
-        <textarea class="form-control" name="occassionalIntro" rows="5" placeholder="Opcjonalny wstęp okolicznościowy.">@order.OccassionalIntro</textarea>
-        Wyjątki z rozkazu:
-        <textarea class="form-control" name="exceptionsFromAnotherOrder" rows="5" placeholder="Wyjątki z rozkazu wyższego szczebla.">@order.ExceptionsFromAnotherOrder</textarea>
+        <p>
+            Wstęp okolicznościowy:
+            <textarea class="form-control" name="occassionalIntro" rows="5" placeholder="Opcjonalny wstęp okolicznościowy.">@order.OccassionalIntro</textarea>
+        </p>
+        <p>
+            Wyjątki z rozkazu:
+            <textarea class="form-control" name="exceptionsFromAnotherOrder" rows="5" placeholder="Wyjątki z rozkazu wyższego szczebla.">@order.ExceptionsFromAnotherOrder</textarea>
+        </p>
     </div>
 
     @Html.AntiForgeryToken()
