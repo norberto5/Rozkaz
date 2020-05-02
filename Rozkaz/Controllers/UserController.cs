@@ -29,10 +29,15 @@ namespace Rozkaz.Controllers
         [Authorize]
         public IActionResult Logout()
         {
-            string redirectPage = Url.Action(nameof(LoggedOut), "User", null, HttpContext.Request.Scheme);
-            return new RedirectResult("https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=" + HttpUtility.UrlEncode(redirectPage));
+            HttpContext.Session.Clear();
+            foreach(string cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }  
+            SignOut();
+            return new RedirectToActionResult(nameof(LoggedOut), "User", string.Empty);
         }
 
         public IActionResult LoggedOut() => View();
-    }
+  }
 }
