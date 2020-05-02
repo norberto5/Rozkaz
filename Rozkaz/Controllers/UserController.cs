@@ -34,7 +34,6 @@ namespace Rozkaz.Controllers
             {
                 Response.Cookies.Delete(cookie);
             }  
-            SignOut();
             return new RedirectToActionResult(nameof(LoggedOut), "User", string.Empty);
         }
 
