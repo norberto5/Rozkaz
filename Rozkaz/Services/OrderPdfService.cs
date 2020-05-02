@@ -71,19 +71,19 @@ namespace Rozkaz.Services
             {
                 Info = new OrderInfoModel()
                 {
-                    Author = "HO Norbert Piątkowski",
+                    Author = "pwd. Norbert Piątkowski",
                     City = "Szczecin",
                     Date = DateTime.Now,
                     OrderNumber = 1,
                     Unit = new UnitModel()
                     {
-                        NameFirstLine = "22. Drużyna Harcerska",
-                        NameSecondLine = "\"Błękitna\"",
+                        NameFirstLine = "13. Drużyna Harcerska",
+                        NameSecondLine = "\"Panda\"",
                         SubtextLines = new string[3]
                         {
                             "Chorągiew Zachodniopomorska ZHP",
                             "Hufiec Szczecin",
-                            "Naczelny programista",
+                            "Drużynowy",
                         }
                     }
                 },
