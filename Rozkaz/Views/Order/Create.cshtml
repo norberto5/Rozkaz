@@ -1,70 +1,70 @@
 ﻿@{
-    ViewData["Title"] = "Tworzenie rozkazu";
+  ViewData["Title"] = "Tworzenie rozkazu";
 }
 <h2>@ViewData["Title"]</h2>
 
 <p>
-    <a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Index">
-        <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Wróć
-    </a>
+  <a class="btn btn-warning" role="button" asp-area="" asp-controller="Order" asp-action="Index">
+    <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span> Wróć
+  </a>
 </p>
 
 <form id="order_edit" method="post" enctype="application/x-www-form-urlencoded">
 
 <div class="form-group">
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="input-group">
-                <span class="input-group-addon"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span></span>
-                <span class="input-group-addon">Rozkaz L.</span>
-                <input class="form-control" name="info.orderNumber" aria-label="Numer rozkazu" type="number" min="0" max="99" placeholder="np. 3" required />
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="input-group">
-                <span class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
-                <input class="form-control" name="info.author" aria-label="Autor" type="text" maxlength="50" placeholder="np. phm. Jan Kowalski" required />
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span></span>
+        <span class="input-group-addon">Rozkaz L.</span>
+        <input class="form-control" name="info.orderNumber" aria-label="Numer rozkazu" type="number" min="0" max="99" placeholder="np. 3" required />
+      </div>
     </div>
+    <div class="col-lg-6">
+      <div class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+        <input class="form-control" name="info.author" aria-label="Autor" type="text" maxlength="50" placeholder="np. phm. Jan Kowalski" required />
+      </div>
+    </div>
+  </div>
 
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="input-group">
-                <span class="input-group-addon"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></span>
-                <input class="form-control" name="info.city" aria-label="Miejscowość" type="text" maxlength="30" placeholder="np. Szczecin" required />
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="input-group">
-                <span class="input-group-addon" id="date-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></span>
-                <input class="form-control" name="info.date" aria-label="Data" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span></span>
+        <input class="form-control" name="info.city" aria-label="Miejscowość" type="text" maxlength="30" placeholder="np. Szczecin" required />
+      </div>
     </div>
+    <div class="col-lg-6">
+      <div class="input-group">
+        <span class="input-group-addon" id="date-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></span>
+        <input class="form-control" name="info.date" aria-label="Data" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="form-group">
-    <p>Nazwa jednostki:</p>
-    <div class="input-group">
-        <span class="input-group-addon">1.</span>
-        <input class="form-control" name="info.unit.nameFirstLine" aria-label="Nazwa jednostki 1" type="text" maxlength="30" placeholder="np. 36. Drużyna Harcerska" required />
-    </div>
-    <div class="input-group">
-        <span class="input-group-addon">2.</span>
-        <input class="form-control" name="info.unit.nameSecondLine" aria-label="Nazwa jednostki 2" type="text" maxlength="30" placeholder='np. "Czarne wilki"' />
-    </div>
+  <p>Nazwa jednostki:</p>
+  <div class="input-group">
+    <span class="input-group-addon">1.</span>
+    <input class="form-control" name="info.unit.nameFirstLine" aria-label="Nazwa jednostki 1" type="text" maxlength="30" placeholder="np. 36. Drużyna Harcerska" required />
+  </div>
+  <div class="input-group">
+    <span class="input-group-addon">2.</span>
+    <input class="form-control" name="info.unit.nameSecondLine" aria-label="Nazwa jednostki 2" type="text" maxlength="30" placeholder='np. "Czarne wilki"' />
+  </div>
 </div>
 
 <div class="form-group">
-    <p>
-        Wstęp okolicznościowy:
-        <textarea class="form-control" name="occassionalIntro" rows="5" placeholder="Opcjonalny wstęp okolicznościowy."></textarea>
-    </p>
-    <p>
-        Wyjątki z rozkazu:
-        <textarea class="form-control" name="exceptionsFromAnotherOrder" rows="5" placeholder="Wyjątki z rozkazu wyższego szczebla."></textarea>
-    </p>
+  <p>
+    Wstęp okolicznościowy:
+    <textarea class="form-control" name="occassionalIntro" rows="5" placeholder="Opcjonalny wstęp okolicznościowy."></textarea>
+  </p>
+  <p>
+    Wyjątki z rozkazu:
+    <textarea class="form-control" name="exceptionsFromAnotherOrder" rows="5" placeholder="Wyjątki z rozkazu wyższego szczebla."></textarea>
+  </p>
 </div>
 
 @Html.AntiForgeryToken()
