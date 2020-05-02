@@ -3,87 +3,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Client;
 using System.Threading.Tasks;
 using System.Web;
-using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using Rozkaz.Models;
-using Rozkaz.Utils;
+using Rozkaz.Services;
 
 namespace Rozkaz.Controllers
 {
     public class UserController : Controller
     {
-        private readonly ITokenAcquisition tokenAcquisition;
-        private readonly IGraphApiOperations graphApiOperations;
-
+        private readonly UserResolver userResolveService;
         private readonly RozkazDatabaseContext db;
 
-        public UserController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations, RozkazDatabaseContext rozkazDatabaseContext)
+        public UserController(UserResolver userResolveService, RozkazDatabaseContext rozkazDatabaseContext)
         {
-            this.tokenAcquisition = tokenAcquisition;
-            this.graphApiOperations = graphApiOperations;
+            this.userResolveService = userResolveService;
             db = rozkazDatabaseContext;
         }
-
-        public static async Task<User> GetUser(HttpContext httpContext, ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations, RozkazDatabaseContext db)
-        {
-            string accessToken = await tokenAcquisition.GetAccessTokenOnBehalfOfUser(httpContext, new[] { Constants.ScopeUserRead });
-
-            var userInformation = await graphApiOperations.GetUserInformation(accessToken) as JObject;
-
-            User user = userInformation.ToObject<User>();
-
-            User dbUser = db.Users.Find(user.Id);
-
-            if (dbUser == null)
-            {
-                db.Users.Add(user);
-                db.SaveChanges();
-            }
-            else
-            {
-                user = dbUser;
-            }
-
-            httpContext.Session.Set("User", user);
-
-            return user;
-        }
-
 
         public IActionResult Login() => new LocalRedirectResult("/AzureAD/Account/SignIn");
 
         [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
-        public async Task<IActionResult> Index()
-        {
-            var user = await GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-
-            //db.Orders.Add(
-            //    new OrderEntry()
-            //    {
-            //        Owner = user,
-            //        Order = new OrderModel()
-            //        {
-            //            Info = new OrderInfoModel()
-            //            {
-            //                Author = user.DisplayName,
-            //                City = "Warszawa",
-            //                Date = DateTime.Now,
-            //                OrderNumber = 66,
-            //                OrderType = OrderType.Normal,
-            //                Unit = new UnitModel()
-            //                {
-            //                    NameFirstLine = "Harcerski Klub Ratowniczy",
-            //                    NameSecondLine = "\"Szczecin\""
-            //                }
-            //            }
-            //        }
-            //    });
-            //db.SaveChanges();
-
-            return View(user);
-        }
+        public async Task<IActionResult> Index() => base.View(await userResolveService.GetUser());
 
         [Authorize]
         public IActionResult Logout()

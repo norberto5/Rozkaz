@@ -1,51 +1,54 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Client;
 using Rozkaz.Models;
-using WebApp_OpenIDConnect_DotNet.Services.GraphOperations;
 using WebApp_OpenIDConnect_DotNet.Infrastructure;
 using System;
 using Rozkaz.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Rozkaz.Controllers
 {
     [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
     public class OrderController : Controller
     {
-        private readonly ITokenAcquisition tokenAcquisition;
-        private readonly IGraphApiOperations graphApiOperations;
+        private readonly UserResolver userResolveService;
 
         private readonly RozkazDatabaseContext db;
         private readonly OrderPdfService orderPdfService;
+        private User currentUser;
 
-        public OrderController(ITokenAcquisition tokenAcquisition, IGraphApiOperations graphApiOperations, RozkazDatabaseContext rozkazDatabaseContext, OrderPdfService orderPdfService)
+        public OrderController(UserResolver userResolveService, RozkazDatabaseContext rozkazDatabaseContext, OrderPdfService orderPdfService)
         {
-            this.tokenAcquisition = tokenAcquisition;
-            this.graphApiOperations = graphApiOperations;
+            this.userResolveService = userResolveService;
             db = rozkazDatabaseContext;
             this.orderPdfService = orderPdfService;
         }
 
-        // GET: Order
-        public async Task<IActionResult> Index()
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
-            User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-            var orders = db.Orders.Where(o => o.Owner == currentUser).OrderBy(o => o.CreatedTime).ToList();
+          currentUser = userResolveService.GetUser().Result;
+
+          base.OnActionExecuting(context);
+        }
+
+        // GET: Order
+        public IActionResult Index()
+        {
+            var orders = db.Orders.Include(o => o.Owner).Where(o => o.Owner == currentUser).OrderBy(o => o.CreatedTime).ToList();
             return View(orders);
         }
 
         // GET: Order/Show/5
-        public async Task<ActionResult> Show(Guid id)
+        public IActionResult Show(Guid id)
         {
-            User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-            OrderEntry orderEntry = db.Orders.SingleOrDefault(o => o.Uid == id);
+            OrderEntry orderEntry = db.Orders.Include(o => o.Owner).SingleOrDefault(o => o.Uid == id);
 
-            if(!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
+            if(!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -58,19 +61,14 @@ namespace Rozkaz.Controllers
         }
 
         // GET: Order/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Order/Create
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(OrderModel model)
+        public IActionResult Create(OrderModel model)
         {
             try
             {
-                User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-
                 db.Orders.Add(
                     new OrderEntry()
                     {
@@ -90,13 +88,11 @@ namespace Rozkaz.Controllers
         }
 
         // GET: Order/Edit/5
-        public async Task<ActionResult> Edit(Guid id)
+        public IActionResult Edit(Guid id)
         {
-            User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
+            OrderEntry orderEntry = db.Orders.Include(o => o.Owner).SingleOrDefault(o => o.Uid == id);
 
-            OrderEntry orderEntry = db.Orders.SingleOrDefault(o => o.Uid == id);
-
-            if(!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
+            if(!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
             {
                 return View();
             }
@@ -106,14 +102,13 @@ namespace Rozkaz.Controllers
 
         // POST: Order/Edit/5
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Guid id, OrderModel model)
+        public IActionResult Edit(Guid id, OrderModel model)
         {
             try
             {
-                User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-                OrderEntry orderEntry = db.Orders.Where(o => o.Uid == id).SingleOrDefault();
+                OrderEntry orderEntry = db.Orders.Include(o => o.Owner).Where(o => o.Uid == id).SingleOrDefault();
 
-                if (!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
+                if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
                 {
                     return View();
                 }
@@ -137,12 +132,11 @@ namespace Rozkaz.Controllers
         }
 
         // GET: Order/Delete/5
-        public async Task<ActionResult> Delete(Guid id)
+        public IActionResult Delete(Guid id)
         {
-            User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-            OrderEntry orderEntry = db.Orders.Where(o => o.Uid == id).SingleOrDefault();
+            OrderEntry orderEntry = db.Orders.Include(o => o.Owner).Where(o => o.Uid == id).SingleOrDefault();
 
-            if (!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
+            if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
             {
                 return View();
             }
@@ -152,14 +146,13 @@ namespace Rozkaz.Controllers
 
         // POST: Order/Delete/5
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(Guid id, IFormCollection formCollection)
+        public IActionResult Delete(Guid id, IFormCollection formCollection)
         {
             try
             {
-                User currentUser = await UserController.GetUser(HttpContext, tokenAcquisition, graphApiOperations, db);
-                OrderEntry orderEntry = db.Orders.Where(o => o.Uid == id).SingleOrDefault();
+                OrderEntry orderEntry = db.Orders.Include(o => o.Owner).Where(o => o.Uid == id).SingleOrDefault();
 
-                if (!IsOrderFoundAndUserHavePermission(orderEntry, currentUser))
+                if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
                 {
                     return View();
                 }
@@ -178,7 +171,7 @@ namespace Rozkaz.Controllers
             }
         }
 
-        private bool IsOrderFoundAndUserHavePermission(OrderEntry orderEntry, User currentUser)
+        private bool IsOrderFoundAndCurrentUserHavePermission(OrderEntry orderEntry)
         {
             if (orderEntry == null || orderEntry.Deleted)
             {

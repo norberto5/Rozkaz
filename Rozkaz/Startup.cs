@@ -51,6 +51,9 @@ namespace Rozkaz
             services.AddGraphService(Configuration);
 
             services.AddSingleton<OrderPdfService>();
+            services.AddScoped<UserResolver>();
+
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
