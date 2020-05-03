@@ -46,9 +46,9 @@ namespace Rozkaz.Controllers
     // GET: Order/Show/5
     public IActionResult Show(Guid id)
     {
-      OrderEntry orderEntry = db.Orders.Include(o => o.Owner).SingleOrDefault(o => o.Uid == id);
+      OrderEntry orderEntry = GetOrder(id);
 
-      if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
+      if (!IsOrderFoundAndCurrentUserHasPermission(orderEntry))
       {
         return RedirectToAction(nameof(Index));
       }
@@ -90,9 +90,9 @@ namespace Rozkaz.Controllers
     // GET: Order/Edit/5
     public IActionResult Edit(Guid id)
     {
-      OrderEntry orderEntry = db.Orders.Include(o => o.Owner).SingleOrDefault(o => o.Uid == id);
+      OrderEntry orderEntry = GetOrder(id);
 
-      if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
+      if (!IsOrderFoundAndCurrentUserHasPermission(orderEntry))
       {
         return View();
       }
@@ -106,9 +106,9 @@ namespace Rozkaz.Controllers
     {
       try
       {
-        OrderEntry orderEntry = db.Orders.Include(o => o.Owner).Where(o => o.Uid == id).SingleOrDefault();
+        OrderEntry orderEntry = GetOrder(id);
 
-        if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
+        if (!IsOrderFoundAndCurrentUserHasPermission(orderEntry))
         {
           return View();
         }
@@ -134,9 +134,9 @@ namespace Rozkaz.Controllers
     // GET: Order/Delete/5
     public IActionResult Delete(Guid id)
     {
-      OrderEntry orderEntry = db.Orders.Include(o => o.Owner).Where(o => o.Uid == id).SingleOrDefault();
+      OrderEntry orderEntry = GetOrder(id);
 
-      if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
+      if (!IsOrderFoundAndCurrentUserHasPermission(orderEntry))
       {
         return View();
       }
@@ -150,9 +150,9 @@ namespace Rozkaz.Controllers
     {
       try
       {
-        OrderEntry orderEntry = db.Orders.Include(o => o.Owner).Where(o => o.Uid == id).SingleOrDefault();
+        OrderEntry orderEntry = GetOrder(id);
 
-        if (!IsOrderFoundAndCurrentUserHavePermission(orderEntry))
+        if (!IsOrderFoundAndCurrentUserHasPermission(orderEntry))
         {
           return View();
         }
@@ -171,7 +171,9 @@ namespace Rozkaz.Controllers
       }
     }
 
-    private bool IsOrderFoundAndCurrentUserHavePermission(OrderEntry orderEntry)
+    private OrderEntry GetOrder(Guid id) => db.Orders.Include(o => o.Owner).SingleOrDefault(o => o.Uid == id);
+
+    private bool IsOrderFoundAndCurrentUserHasPermission(OrderEntry orderEntry)
     {
       if (orderEntry == null || orderEntry.Deleted)
       {
