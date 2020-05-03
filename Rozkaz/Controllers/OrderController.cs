@@ -16,22 +16,22 @@ namespace Rozkaz.Controllers
   [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
   public class OrderController : Controller
   {
-    private readonly UserResolver userResolveService;
+    private readonly UserResolver userResolver;
 
     private readonly RozkazDatabaseContext db;
     private readonly OrderPdfService orderPdfService;
     private User currentUser;
 
-    public OrderController(UserResolver userResolveService, RozkazDatabaseContext rozkazDatabaseContext, OrderPdfService orderPdfService)
+    public OrderController(UserResolver userResolver, RozkazDatabaseContext rozkazDatabaseContext, OrderPdfService orderPdfService)
     {
-      this.userResolveService = userResolveService;
+      this.userResolver = userResolver;
       db = rozkazDatabaseContext;
       this.orderPdfService = orderPdfService;
     }
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-      currentUser = userResolveService.GetUser().Result;
+      currentUser = userResolver.GetUser().Result;
 
       base.OnActionExecuting(context);
     }

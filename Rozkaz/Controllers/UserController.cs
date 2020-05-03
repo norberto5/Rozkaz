@@ -11,19 +11,19 @@ namespace Rozkaz.Controllers
 {
   public class UserController : Controller
   {
-    private readonly UserResolver userResolveService;
+    private readonly UserResolver userResolver;
     private readonly RozkazDatabaseContext db;
 
-    public UserController(UserResolver userResolveService, RozkazDatabaseContext rozkazDatabaseContext)
+    public UserController(UserResolver userResolver, RozkazDatabaseContext rozkazDatabaseContext)
     {
-      this.userResolveService = userResolveService;
+      this.userResolver = userResolver;
       db = rozkazDatabaseContext;
     }
 
     public IActionResult Login() => new LocalRedirectResult("/AzureAD/Account/SignIn");
 
     [Authorize, MsalUiRequiredExceptionFilter(Scopes = new[] { Constants.ScopeUserRead })]
-    public async Task<IActionResult> Index() => base.View(await userResolveService.GetUser());
+    public async Task<IActionResult> Index() => base.View(await userResolver.GetUser());
 
     [Authorize]
     public IActionResult Logout()
